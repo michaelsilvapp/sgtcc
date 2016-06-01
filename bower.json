@@ -1,0 +1,17 @@
+{
+  "name": "dependencias",
+  "description": "Projeto com melhoramentos",
+  "main": "",
+  "authors": [
+    "Michael Pereira"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
