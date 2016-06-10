@@ -2,18 +2,8 @@
 var save_method; //for save method string
 var table;
 
-$(document).ready(function() {
-
-    //datepicker
-    $('.datepicker').datepicker({
-        autoclose: true,
-        format: "yyyy-mm-dd",
-        todayHighlight: true,
-        orientation: "top auto",
-        todayBtn: true,
-        todayHighlight: true,  
-    });
-
+$(document).ready(function() 
+{
     //set input/textarea/select event when change value, remove class error and remove text help block 
     $("input").change(function(){
         $(this).parent().parent().removeClass('has-error');
@@ -32,21 +22,33 @@ $(document).ready(function() {
 
 function opcao_cadastro()
 {
-    //save_method = 'add';
     $('#form-button')[0].reset(); // reset form on modals
     $('#modal_button').modal('show'); // show bootstrap modal
     $('.modal-title').text('Cadastrar'); // Set Title to Bootstrap modal title
 }
 
-function add_person()
+function add_aluno()
 {
-    save_method = 'add';
-    $('#form')[0].reset(); // reset form on modals
+    save_method = 'novo_aluno';
+    $('#form_aluno')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
-    $('#modal_form').modal('show'); // show bootstrap modal
-    $('.modal-title').text('Cadastro de ususuario'); // Set Title to Bootstrap modal title
+    $('#modal_button').modal('hide');//fechar o modal de buttons
+    $('#modal_aluno').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Aluno'); // Set Title to Bootstrap modal title
 }
+
+function add_professor()
+{
+    save_method = 'novo_professor';
+    $('#form_professor')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_button').modal('hide');//fechar o modal de buttons
+    $('#modal_professor').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Professor'); // Set Title to Bootstrap modal title
+}
+
 
 function edit_person(id)
 {
@@ -85,51 +87,115 @@ function reload_table()
     table.ajax.reload(null,false); //reload datatable ajax 
 }
 
-function save()
+function salvar_aluno()
 {
-    $('#btnSave').text('Salvando...'); //change button text
-    $('#btnSave').attr('disabled',true); //set button disable 
+    $('#btnSalvar_aluno').text('Salvando...'); //change button text
+    $('#btnSalvar_aluno').attr('disabled',true); //set button disable 
     var url;
 
-    if(save_method == 'add') {
-        url = "<?php echo base_url('person/ajax_add')?>";
-    } else {
-        url = "<?php echo base_url('person/ajax_update')?>";
-    }
-
+    if(save_method == 'novo_aluno') 
+    {
+        url = "<?php echo base_url('aluno/cadastrar_aluno_ajax')?>";
+    } 
     // ajax adding data to database
     $.ajax({
         url : url,
         type: "POST",
-        data: $('#form').serialize(),
+        data: $('#form_aluno').serialize(),
         dataType: "JSON",
         success: function(data)
         {
 
             if(data.status) //if success close modal and reload ajax table
             {
-                $('#modal_form').modal('hide');
-                 $('.alerta-msg').text('Cadastro realizado com sucesso'); // Set Title to Bootstrap modal title
-                reload_table();
+                $('#modal_aluno').modal('hide');
+                $('#modal_professor').modal('hide');
+                $('#modal_alerta').modal('show'); // show bootstrap modal
+                if(save_method == 'novo_aluno')
+                {
+                    $('.alerta-msg').text('Cadastrado realizado com sucesso'); // Set Title to Bootstrap modal title
+                }
+                else
+                {
+                    $('.alerta-msg').text('Cadastro editado com sucesso'); // Set Title to Bootstrap modal title
+                }
             }
             else
             {
-                for (var i = 0; i < data.inputerror.length; i++) 
+                for (var i = 0; i < data.campo.length; i++) 
                 {
-                    $('[name="'+data.inputerror[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
-                    $('[name="'+data.inputerror[i]+'"]').next().text(data.error_string[i]); //select span help-block class set text error string
+                    $('[name="'+data.campo[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                    $('[name="'+data.campo[i]+'"]').next().text(data.msg_erro[i]); //select span help-block class set text error string
                 }
             }
-            $('#btnSave').text('save'); //change button text
-            $('#btnSave').attr('disabled',false); //set button enable 
+            $('#btnSalvar_aluno').text('Salvar'); //change button text
+            $('#btnSalvar_aluno').attr('disabled',false); //set button enable 
 
 
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            alert('Error adding / update data');
-            $('#btnSave').text('save'); //change button text
-            $('#btnSave').attr('disabled',false); //set button enable 
+            $('#modal_alerta').modal('show'); // show bootstrap modal
+            $('.alerta-msg').text('ERRO 42 Problema no cadastro :('); // Set Title to Bootstrap modal title
+            $('#btnSalvar_aluno').text('Salvar'); //change button text
+            $('#btnSalvar_aluno').attr('disabled',false); //set button enable 
+
+        }
+    });
+}
+
+function salvar_professor()
+{
+    $('#btnSalvar_professor').text('Salvando...'); //change button text
+    $('#btnSalvar_professor').attr('disabled',true); //set button disable 
+    var url;
+    if(save_method == 'novo_professor')
+    {
+        url = "<?php echo base_url('professor/cadastrar_professor_ajax')?>";
+    }
+
+    // ajax adding data to database
+    $.ajax({
+        url : url,
+        type: "POST",
+        data: $('#form_professor').serialize(),
+        dataType: "JSON",
+        success: function(data)
+        {
+
+            if(data.status) //if success close modal and reload ajax table
+            {
+                $('#modal_aluno').modal('hide');
+                $('#modal_professor').modal('hide');
+                $('#modal_alerta').modal('show'); // show bootstrap modal
+                if(save_method == 'novo_professor')
+                {
+                    $('.alerta-msg').text('Cadastrado realizado com sucesso'); // Set Title to Bootstrap modal title
+                }
+                else
+                {
+                    $('.alerta-msg').text('Cadastro editado com sucesso'); // Set Title to Bootstrap modal title
+                }
+            }
+            else
+            {
+                for (var i = 0; i < data.campo.length; i++) 
+                {
+                    $('[name="'+data.campo[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                    $('[name="'+data.campo[i]+'"]').next().text(data.msg_erro[i]); //select span help-block class set text error string
+                }
+            }
+            $('#btnSalvar_professor').text('Salvar'); //change button text
+            $('#btnSalvar_professor').attr('disabled',false); //set button enable 
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            $('#modal_alerta').modal('show'); // show bootstrap modal
+            $('.alerta-msg').text('ERRO 42 Problema no cadastro :('); // Set Title to Bootstrap modal title
+            $('#btnSalvar_professor').text('Salvar'); //change button text
+            $('#btnSalvar_professor').attr('disabled',false); //set button enable 
 
         }
     });

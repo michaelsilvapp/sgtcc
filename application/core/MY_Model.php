@@ -11,7 +11,8 @@ class MY_Model extends CI_Model
 	########################################### Insert ################################################
 	public function cadastrar($tabela, $dados = null)
 	{
-		return $insere_funcionario = $this->db->insert($tabela, $dados);	
+		$insere_funcionario = $this->db->insert($tabela, $dados);	
+		return $this->db->insert_id();
 	}
 
 	public function excluir($tabela, $referencia, $id)
