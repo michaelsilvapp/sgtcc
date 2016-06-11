@@ -1,14 +1,15 @@
+
 <br/><br/>
 <div class="container">
   <div class="card card-container">
     <img class="profile-img-card" src="http://icons.iconarchive.com/icons/gakuseisean/ivista-2/128/Misc-User-icon.png" alt="" /> 
     <p id="profile-name" class="profile-name-card"></p>
-    <form class="form-signin" name="form_login" id="form_login" method="POST">
+    <form class="form-signin" action="" method="POST">
       <div class="form-group">
         <select class="form-control" id="inputSelect" required>
-          <option value="professor">Professor</option>
-          <option value="aluno">Aluno</option>
-          <option value="organizacao">Organizações</option>
+          <option>Professor</option>
+          <option>Aluno</option>
+          <option>Organizações</option>
         </select>
       </div>
       <input type="email" name="login" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
@@ -67,6 +68,7 @@
         <div class="box box-primary flat">
           <div class="box-body">
             <form action="#" id="form_aluno" class="form-horizontal">
+              <input type="hidden" name="<?=$csrf['name'];?>" value="<?=$csrf['hash'];?>" />
               <div class="form-group">
                 <label class="control-label col-md-3">Nome</label>
                 <div class="col-md-9">
@@ -172,6 +174,7 @@
         <div class="box box-primary flat">
           <div class="box-body">
             <form action="#" id="form_professor" class="form-horizontal">
+              <input type="hidden" name="<?=$csrf['name'];?>" value="<?=$csrf['hash'];?>" />
               <div class="form-group">
                 <label class="control-label col-md-3">Nome</label>
                 <div class="col-md-9">

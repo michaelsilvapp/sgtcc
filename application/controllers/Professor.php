@@ -12,9 +12,7 @@ class Professor extends CI_Controller
 
 	public function index()
 	{
-		$this->load->view('inc/head');
-		$this->load->view('login/index');
-		$this->load->view('login/acoes_ajax');
+		redirect();
 	}
 
 	public function cadastrar_professor_ajax()
@@ -59,7 +57,7 @@ class Professor extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|trim|valid_email|is_unique[tb_professores.email]')->run() == TRUE)
+		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|trim|valid_email|is_unique[tb_professores.email]|is_unique[tb_alunos.email]')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -81,7 +79,7 @@ class Professor extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('confirmar', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[senha]|trim')->run() == TRUE)
+		if($this->form_validation->set_rules('confirmar', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[senha]|trim', array('matches' => 'As senhas não são iguais' , ))->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -92,7 +90,7 @@ class Professor extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('cpf', 'CPF', 'required|is_unique[tb_professores.cpf]')->run() == TRUE)
+		if($this->form_validation->set_rules('cpf', 'CPF', 'required|is_unique[tb_professores.cpf]|is_unique[tb_alunos.email]')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -140,53 +138,6 @@ class Professor extends CI_Controller
 		{
 			echo json_encode($data);
 			exit();
-		}
-	}
-
-	public function valida_cpf($cpf)
-	{
-		if(empty($cpf))
-		{
-			$this->form_validation->set_message('valida_cpf', 'O campo {field} não foi informado.');
-			return FALSE;
-		}
-
-		############## Remove máscara ##############
-		$cpf = preg_replace('[^0-9]', '', $cpf);
-		$cpf = str_pad($cpf, 11, '0');
-
-		############## Verifica se o número informado e igual a 11 ##############
-		if(strlen($cpf) != 11)
-		{
-			$this->form_validation->set_message('valida_cpf', 'O campo {field} é inválido ENTROU 1.');
-			return FALSE;
-		}
-
-		############## Verifica sequencias inválidas ##############
-		elseif($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999')
-		{
-			$this->form_validation->set_message('valida_cpf', 'O campo {field} é inválido ENTROU 2. ');
-			return FALSE;	
-		}
-		############## Calcula os digitos verificadores para vereficar se o CPF e valido ##############
-		else
-		{
-			for($i = 9; $i < 11; $i++) 
-			{ 
-				for($d = 0, $c = 0; $c < $i; $c++)
-				{ 
-					$d += $cpf{$c} * (($i + 1) - $c);
-				}
-
-				$d = ((10 * $d) % 11) % 10;
-
-				if($cpf{$c} != $d)
-				{
-					$this->form_validation->set_message('valida_cpf', 'O campo {field} é inválido. ENTROU3');
-					return FALSE;
-				}
-			}	
-		return TRUE;	
 		}
 	}
 }

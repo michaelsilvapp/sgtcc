@@ -12,9 +12,7 @@ class Aluno extends CI_Controller
 
 	public function index()
 	{
-		$this->load->view('inc/head');
-		$this->load->view('login/index');
-		$this->load->view('login/acoes_ajax');
+		redirect('login');
 	}
 
 	public function cadastrar_aluno_ajax()
@@ -46,7 +44,8 @@ class Aluno extends CI_Controller
 		$data['campo'] = array();
 		$data['status'] = TRUE;
 
-		if($this->form_validation->set_rules('nome', 'Nome', 'required|min_length[4]|addslashes')->run() == TRUE)
+		###########################################################################
+		if($this->form_validation->set_rules('nome', 'Nome', 'required|min_length[4]|addslashes|trim')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -57,7 +56,7 @@ class Aluno extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|valid_email|is_unique[tb_alunos.email]')->run() == TRUE)
+		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|trim|valid_email|is_unique[tb_professores.email]|is_unique[tb_alunos.email]')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -79,7 +78,7 @@ class Aluno extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('confirmar', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[senha]|trim')->run() == TRUE)
+		if($this->form_validation->set_rules('confirmar', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[senha]|trim', array('matches' => 'As senhas não são iguais' , ))->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -90,7 +89,7 @@ class Aluno extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('cpf', 'CPF', 'required|addslashes|is_unique[tb_alunos.cpf]')->run() == TRUE)
+		if($this->form_validation->set_rules('cpf', 'CPF', 'required|is_unique[tb_professores.cpf]|is_unique[tb_alunos.email]')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}
@@ -101,7 +100,7 @@ class Aluno extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('dt_nascimento', 'Data de Nascimento', 'required|min_length[9]|addslashes')->run() == TRUE)
+		if($this->form_validation->set_rules('dt_nascimento', 'Data de Nascimento', 'required|min_length[9]|addslashes|trim')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}

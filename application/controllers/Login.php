@@ -12,8 +12,9 @@ class Login extends CI_Controller
 
 	public function index()
 	{
+		$data['csrf'] = array('name' => $this->security->get_csrf_token_name(),'hash' => $this->security->get_csrf_hash());
 		$this->load->view('inc/head');
-		$this->load->view('login/index');//view responsvel com form login e form cadastros
+		$this->load->view('login/index', $data);//view responsvel com form login e form cadastros
 		$this->load->view('login/acoes_ajax');
 	}
 
