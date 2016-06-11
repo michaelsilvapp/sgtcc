@@ -1,15 +1,22 @@
 {
-  "name": "Project",
-  "description": "Projeto InerVerin",
-  "main": "",
+  "name": "SG_TCC",
+  "version": "1.0.1",
   "authors": [
-    "Michael Pereira"
+    "Michael Pereira da Pasco Silva"
+  ],
+  "description": "Sistema de sugestão de TCC",
+  "main": "assets/scripts/main.js",
+  "keywords": [
+    "sg_tcc"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/michaelsilvapp/sgtcc",
+  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "test",
+    "tests"
   ]
 }
