@@ -287,7 +287,7 @@
 </div>
 <!-- /.modal-dialog -->
 <!-- jQuery 2.1.4 -->
-<script src="<?php echo base_url('assests/plugins/jQuery/jQuery-2.1.4.min.js')?>" type="text/javascript"></script>
+<script src="<?php echo base_url('assets/jquery/dist/jquery.js')?>" type="text/javascript"></script>
 <!-- Bootstrap 3.3.2 JS -->
 <script src="<?php echo base_url('assests/bootstrap/js/bootstrap.js')?>" type="text/javascript"></script>
 <!-- AdminLTE App -->

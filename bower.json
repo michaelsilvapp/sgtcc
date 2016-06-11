@@ -5,7 +5,6 @@
     "Michael Pereira da Pasco Silva"
   ],
   "description": "Sistema de sugestão de TCC",
-  "main": "assets/scripts/main.js",
   "keywords": [
     "sg_tcc"
   ],
@@ -18,5 +17,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "jquery": "2.1.4",
+    "bootstrap": "3.3.6"
+  }
 }
