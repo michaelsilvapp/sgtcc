@@ -199,8 +199,8 @@ function autentica_dados_login()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            $('#modal_alerta_erro').modal('show'); // show bootstrap modal
-            $('.alerta-msg').text('Email ou Senha não conferem'); // Set Title to Bootstrap modal title
+            $('[name="login_senha"]').parent().parent().addClass('has-error'); 
+            $('[name="login_senha"]').next().text('Login ou Senha não conferem ou você selecionou tipo de usuario errado');
             $('#btnlogar').text('Fazer Login'); //change button text
             $('#btnlogar').attr('disabled',false); //set button enable 
 

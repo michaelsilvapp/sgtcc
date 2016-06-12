@@ -23,15 +23,13 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <img src="<?php echo base_url('assests/imagens/img_sistema/use.png')?>" class="user-image" alt="User Image"/>
-            <span class="hidden-xs">Alexander Pierce</span>
+            <span class="hidden-xs name_usuario"></span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
                 <img src="<?php echo base_url('assests/imagens/img_sistema/use.png')?>" class="img-circle" alt="User Image" />
-                <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
+                <p><small>Membro de de  2012</small>
                 </p>
               </li>
               <!-- Menu Body -->
@@ -52,7 +50,9 @@
                   <a href="#" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                 <form method="POST" action="<?php echo base_url('login/sair')?>">
+                   <button name="btnsair" type="submit" class="btn btn-danger"><span class="fa fa-fw fa-power-off"></span> Sair</button>
+                 </form>
                 </div>
               </li>
             </ul>
@@ -71,7 +71,7 @@
           <img src="<?php echo base_url('assests/imagens/img_sistema/use.png')?>" class="img-circle" alt="User Image" />
         </div>
         <div class="pull-left info">
-          <p>Alexander Pierce</p>
+          <p class="name_usuario"></p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>

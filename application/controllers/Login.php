@@ -12,11 +12,16 @@ class Login extends CI_Controller
 
 	public function index()
 	{
-		//$data['csrf'] = array('name' => $this->security->get_csrf_token_name(),'hash' => $this->security->get_csrf_hash());
 		$this->load->view('inc/head');
 		$this->load->view('login/index');//view responsvel com form login e form cadastros
 		$this->load->view('login/acoes_ajax');
 	}
+
+	public function sair()
+    {
+        $this->session->sess_destroy();
+        redirect('/');
+    }
 
 	public function verfica_login()
 	{
@@ -45,34 +50,14 @@ class Login extends CI_Controller
 			$data['consulta'] = $this->minha_model->logar('*', 'tb_professores', $email, $senha);
 			if(count($data['consulta']) == 1)
 			{
-				$dados_aluno['nome'] = $data['consulta'][0]->nome;
-				$dados_aluno['id'] = $data['consulta'][0]->id_professor;
-				$dados_aluno['logado'] = TRUE;
-				$this->session->set_userdata($dados_aluno);
+				$dados_professor['nome'] = $data['consulta'][0]->nome;
+				$dados_professor['id'] = $data['consulta'][0]->id_professor;
+				$dados_professor['logado'] = TRUE;
+				$this->session->set_userdata($dados_professor);
 
 				echo json_encode(array("status" => TRUE));
 			}
-		}	
-		else
-		{
-			$data = array();
-			$data['msg_erro'] = array();
-			$data['campo'] = array();
-			$data['status'] = TRUE;
-
-			$data['campo'][] = 'login_senha';
-			$data['msg_erro'][] = "Login ou Senha não conferem";
-			$data['status'] = FALSE;
-		
-			###########################################################################
-			if($data['status'] === FALSE)
-			{
-				echo json_encode($data);
-				exit();
-			}
-
-		}
-		
+		}			
 	}
 
 	private function validacao()
