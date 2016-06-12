@@ -1,6 +1,5 @@
 <script type="text/javascript">
 var save_method; //for save method string
-var table;
 
 $(document).ready(function() 
 {
@@ -47,44 +46,6 @@ function add_professor()
     $('#modal_button').modal('hide');//fechar o modal de buttons
     $('#modal_professor').modal('show'); // show bootstrap modal
     $('.modal-title').text('Professor'); // Set Title to Bootstrap modal title
-}
-
-
-function edit_person(id)
-{
-    save_method = 'update';
-    $('#form')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-
-    //Ajax Load data from ajax
-    $.ajax({
-        url : "<?php echo base_url('person/ajax_edit/')?>/" + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-
-            $('[name="id"]').val(data.id);
-            $('[name="firstName"]').val(data.firstName);
-            $('[name="lastName"]').val(data.lastName);
-            $('[name="gender"]').val(data.gender);
-            $('[name="address"]').val(data.address);
-            $('[name="dob"]').datepicker('update',data.dob);
-            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Edit Person'); // Set title to Bootstrap modal title
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax');
-        }
-    });
-}
-
-function reload_table()
-{
-    table.ajax.reload(null,false); //reload datatable ajax 
 }
 
 function salvar_aluno()
@@ -135,8 +96,8 @@ function salvar_aluno()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            $('#modal_alerta').modal('show'); // show bootstrap modal
-            $('.alerta-msg').text('ERRO 42 Problema no cadastro :('); // Set Title to Bootstrap modal title
+            $('#modal_alerta_erro').modal('show'); // show bootstrap modal
+            $('.alerta-msg').text('ERRO :('); // Set Title to Bootstrap modal title
             $('#btnSalvar_aluno').text('Salvar'); //change button text
             $('#btnSalvar_aluno').attr('disabled',false); //set button enable 
 
@@ -192,13 +153,96 @@ function salvar_professor()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            $('#modal_alerta').modal('show'); // show bootstrap modal
-            $('.alerta-msg').text('ERRO 42 Problema no cadastro :('); // Set Title to Bootstrap modal title
+            //$('#modal_alerta_erro').modal('show'); // show bootstrap modal
+            //$('.alerta-msg').text('ERRO :('); // Set Title to Bootstrap modal title
+            $('#modal_alerta_erro').modal('show'); // show bootstrap modal
+            $('.alerta-msg').text('ERRO :('); // Set Title to Bootstrap modal title
             $('#btnSalvar_professor').text('Salvar'); //change button text
             $('#btnSalvar_professor').attr('disabled',false); //set button enable 
 
         }
     });
+}
+
+function autentica_dados_login()
+{
+    $('#btnlogar').text('Entrado...'); //change button text
+    $('#btnlogar').attr('disabled',true); //set button disable 
+
+    var url = "<?php echo base_url('login/verfica_login')?>";
+
+    // ajax adding data to database
+    $.ajax({
+        url : url,
+        type: "POST",
+        data: $('#form_valida_login').serialize(),
+        dataType: "JSON",
+        success: function(data)
+        {
+
+            if(data.status) //if success close modal and reload ajax table
+            {
+                window.location.href = "<?php echo base_url('home'); ?>";
+            }
+            else
+            {
+                for (var i = 0; i < data.campo.length; i++) 
+                {
+                    $('[name="'+data.campo[i]+'"]').parent().parent().addClass('has-error'); //select parent twice to select div form-group class and add has-error class
+                    $('[name="'+data.campo[i]+'"]').next().text(data.msg_erro[i]); //select span help-block class set text error string
+                }
+            }
+            $('#btnlogar').text('Fazer Login'); //change button text
+            $('#btnlogar').attr('disabled',false); //set button enable 
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            $('#modal_alerta_erro').modal('show'); // show bootstrap modal
+            $('.alerta-msg').text('Email ou Senha não conferem'); // Set Title to Bootstrap modal title
+            $('#btnlogar').text('Fazer Login'); //change button text
+            $('#btnlogar').attr('disabled',false); //set button enable 
+
+        }
+    });
+}
+
+function edit_person(id)
+{
+    save_method = 'update';
+    $('#form')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+
+    //Ajax Load data from ajax
+    $.ajax({
+        url : "<?php echo base_url('person/ajax_edit/')?>/" + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+
+            $('[name="id"]').val(data.id);
+            $('[name="firstName"]').val(data.firstName);
+            $('[name="lastName"]').val(data.lastName);
+            $('[name="gender"]').val(data.gender);
+            $('[name="address"]').val(data.address);
+            $('[name="dob"]').datepicker('update',data.dob);
+            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Edit Person'); // Set title to Bootstrap modal title
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
+}
+
+function reload_table()
+{
+    table.ajax.reload(null,false); //reload datatable ajax 
 }
 
 function delete_person(id)

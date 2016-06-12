@@ -12,7 +12,7 @@ class Aluno extends CI_Controller
 
 	public function index()
 	{
-		redirect('login');
+		redirect('/');
 	}
 
 	public function cadastrar_aluno_ajax()
@@ -56,7 +56,7 @@ class Aluno extends CI_Controller
 			$data['status'] = FALSE;
 		}
 		###########################################################################
-		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|trim|valid_email|is_unique[tb_professores.email]|is_unique[tb_alunos.email]')->run() == TRUE)
+		if($this->form_validation->set_rules('email', 'Email', 'required|min_length[6]|addslashes|trim|valid_email|is_unique[tb_alunos.email]')->run() == TRUE)
 		{
 			$data['status'] = TRUE;
 		}

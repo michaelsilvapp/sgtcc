@@ -12,7 +12,7 @@ class Professor extends CI_Controller
 
 	public function index()
 	{
-		redirect();
+		redirect('/');
 	}
 
 	public function cadastrar_professor_ajax()

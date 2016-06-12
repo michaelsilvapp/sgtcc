@@ -11,7 +11,7 @@ class M_Login extends MY_Model
   public function logar($asteristico, $tabela, $email, $senha)
   {
     
-    $retorno = $this->db->select('nome, email, id, senha')->from($tabela)->where('email', $email)->where('senha', $senha)->get()->result();
+    $retorno = $this->db->select($asteristico)->from($tabela)->where('email', $email)->where('senha', $senha)->get()->result();
 
     return $retorno;
     

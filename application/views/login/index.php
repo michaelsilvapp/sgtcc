@@ -2,23 +2,35 @@
 <br/><br/>
 <div class="container">
   <div class="card card-container">
-    <img class="profile-img-card" src="http://icons.iconarchive.com/icons/gakuseisean/ivista-2/128/Misc-User-icon.png" alt="" /> 
+    <img class="profile-img-card" src="<?php echo base_url('assests/imagens/img_sistema/use.png')?>" alt="" /> 
     <p id="profile-name" class="profile-name-card"></p>
-    <form class="form-signin" action="" method="POST">
-      <div class="form-group">
-        <select class="form-control" id="inputSelect" required>
-          <option>Professor</option>
-          <option>Aluno</option>
-          <option>Organizações</option>
+
+    <form autocomplete="off" action="#" id="form_valida_login" class="form-signin" autocomplete="off">
+     <div class="form-group">
+        <select name="tipo_usuario" class="form-control" id="inputSelect">
+          <option value="">-Categoria Usuario-</option>
+          <option value="aluno">Aluno</option>
+          <option value="professor">Professor</option>
+          <option value="organizacao">Organização</option>
         </select>
+        <span class="help-block"></span>
+     </div>
+
+      <div class="form-group">
+        <input type="text" name="login_email" id="inputEmail" class="form-control" placeholder="Email">
+        <span class="help-block"></span>
       </div>
-      <input type="email" name="login" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
-      <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+
+      <div class="form-group">
+        <input type="password" name="login_senha" id="inputPassword" class="form-control" placeholder="Senha">
+        <span class="help-block"></span>
+      </div>
       
-      <span class="help-block"></span>
-      <button class="btn btn-lg btn-primary btn-block btn-signin" name="btnlogar" type="button">Fazer Login</button>
+      <button type="button" name="btnlogar" id="btnlogar" onclick="autentica_dados_login()" class="btn btn-lg btn-primary btn-block btn-signin">Fazer Login</button>
+      
       <a href="#" id="btnCadastrar" onclick="opcao_cadastro()" class="text-center">Cadastre-se</a>
     </form>
+
     <!-- /form -->
   </div>
   <!-- /card-container -->
@@ -32,7 +44,7 @@
         <h3 class="modal-title text-center"></h3>
       </div>
       <div class="modal-body form">
-        <form action="#" id="form-button" class="form-horizontal">
+        <form autocomplete="off" action="#" id="form-button" class="form-horizontal">
           <input type="hidden" value="" name="id"/> 
           <div class="form-body text-center">
             <p>- Sou -</p>
@@ -67,8 +79,8 @@
       <div class="modal-body form">
         <div class="box box-primary flat">
           <div class="box-body">
-            <form action="#" id="form_aluno" class="form-horizontal">
-              <input type="hidden" name="<?=$csrf['name'];?>" value="<?=$csrf['hash'];?>" />
+            <form autocomplete="off" action="#" id="form_aluno" class="form-horizontal">
+              
               <div class="form-group">
                 <label class="control-label col-md-3">Nome</label>
                 <div class="col-md-9">
@@ -174,7 +186,7 @@
         <div class="box box-primary flat">
           <div class="box-body">
             <form action="#" id="form_professor" class="form-horizontal">
-              <input type="hidden" name="<?=$csrf['name'];?>" value="<?=$csrf['hash'];?>" />
+              
               <div class="form-group">
                 <label class="control-label col-md-3">Nome</label>
                 <div class="col-md-9">
@@ -254,11 +266,11 @@
                   <span class="help-block"></span>
                 </div>
               </div>
+            </form>
               <div class="modal-footer">
                 <button type="button" id="btnSalvar_professor" name="btnSalvar_professor" onclick="salvar_professor()" class="btn btn-black btn-flat">Salvar</button>
                 <button type="button" class="btn btn-flat" data-dismiss="modal">Cancelar</button>
               </div>
-            </form>
           </div>
         </div>
       </div>
@@ -285,9 +297,29 @@
       </div><!-- /.box-body -->    
    </div>
 </div>
+
+<div class="modal fade bs-example-modal-sm" id="modal_alerta_erro" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+   <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+         <div class="box-body">
+          <div class="row">
+             <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><br>
+             </div>
+             <div class="alert alert-danger alert-dismissable">
+              <div class="alerta-msg"></div>
+             </div>
+          </div>
+         </div>
+        </div>
+      </div><!-- /.box-body -->    
+   </div>
+</div>
+
 <!-- /.modal-dialog -->
 <!-- jQuery 2.1.4 -->
-<script src="<?php echo base_url('assets/jquery/dist/jquery.js')?>" type="text/javascript"></script>
+<script src="<?php echo base_url('assests/plugins/jQuery/jQuery-2.1.4.min.js')?>"></script>
 <!-- Bootstrap 3.3.2 JS -->
 <script src="<?php echo base_url('assests/bootstrap/js/bootstrap.js')?>" type="text/javascript"></script>
 <!-- AdminLTE App -->
@@ -297,6 +329,8 @@
 <script src="<?php echo base_url('assests/plugins/input-mask/jquery.inputmask.extensions.js')?>" type="text/javascript"></script>
 <script src="<?php echo base_url('assests/plugins/input-mask/inicializacao.js')?>" type="text/javascript"></script>
 <script src="<?php echo base_url('assests/plugins/input-mask/jquery.inputmask.date.extensions.js')?>" type="text/javascript"></script>
+<!-- iCheck 1.0.1 -->
+<script src="<?php echo base_url('assests/plugins/iCheck/icheck.min.js')?>" type="text/javascript"></script>
 <!-- SlimScroll 1.3.0 -->
 <script src="<?php echo base_url('assests/plugins/slimScroll/jquery.slimscroll.js')?>" type="text/javascript"></script>
 <!-- AdminLTE for demo purposes -->
