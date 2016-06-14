@@ -39,6 +39,7 @@ class Login extends CI_Controller
 			{
 				$dados_aluno['nome'] = $data['consulta'][0]->nome;
 				$dados_aluno['id'] = $data['consulta'][0]->id_aluno;
+				$dados_aluno['user'] = 'aluno';
 				$dados_aluno['logado'] = TRUE;
 				$this->session->set_userdata($dados_aluno);
 
@@ -52,6 +53,7 @@ class Login extends CI_Controller
 			{
 				$dados_professor['nome'] = $data['consulta'][0]->nome;
 				$dados_professor['id'] = $data['consulta'][0]->id_professor;
+				$dados_professor['user'] = 'professor';
 				$dados_professor['logado'] = TRUE;
 				$this->session->set_userdata($dados_professor);
 

@@ -18,17 +18,12 @@ class Home extends CI_Controller
 		}
 	}
 
-    public function sair()
-    {
-        $this->session->sess_destroy();
-    }
-
 	public function index()
 	{
 		$this->load->view('inc/head');
 		$this->load->view('inc/menu');
 		$this->load->view('home/index');
 		$this->load->view('usuarios/usuarios_ajax');
-		$this->load->view('inc/footer');
+		//$this->load->view('inc/footer');
 	}
 }

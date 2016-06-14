@@ -87,21 +87,17 @@
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
-        <li class="header">MAIN NAVIGATION</li>
-        <li class="treeview">
-          <a href="#">
-          <i class="fa fa-dashboard"></i> <span>Dashboard</span> <i class="fa fa-angle-left pull-right"></i>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-            <li><a href="../../index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="../calendar.html">
-          <i class="fa fa-calendar"></i> <span>Calendar</span>
-          </a>
-        </li>
+        <li class="header">Menu <?php echo $this->session->userdata('user')?></li>
+         <?php if($this->session->userdata('user') == 'professor'){ ?>
+          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-calendar"></i> <span>Home</span></a></li>
+          <li><a href="<?php echo base_url('professor/dados')?>"><i class="fa fa-calendar"></i> <span>Meus Dados</span></a></li>
+          <li><a href="<?php echo base_url()?>"><i class="fa fa-calendar"></i> <span>Registro Temas</span></a></li>
+          <li><a href=""><i class="fa fa-calendar"></i> <span>Valide Temas</span></a></li>
+          <li><a href=""><i class="fa fa-calendar"></i> <span>Todos os Temas</span></a></li>
+         <?php } elseif($this->session->userdata('user') == 'aluno'){?>
+          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-calendar"></i> <span>Home</span></a></li>
+          <li><a href=""><i class="fa fa-calendar"></i> <span>Todos os Temas</span></a></li>
+         <?php }?>
       </ul>
     </section>
     <!-- /.sidebar -->

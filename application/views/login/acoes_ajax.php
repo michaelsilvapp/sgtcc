@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script type="text/javascript">
 var save_method; //for save method string
 
 $(document).ready(function() 
@@ -18,6 +18,8 @@ $(document).ready(function()
     });
 
 });
+
+
 
 function opcao_cadastro()
 {
@@ -91,8 +93,6 @@ function salvar_aluno()
             }
             $('#btnSalvar_aluno').text('Salvar'); //change button text
             $('#btnSalvar_aluno').attr('disabled',false); //set button enable 
-
-
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
@@ -114,7 +114,10 @@ function salvar_professor()
     {
         url = "<?php echo base_url('professor/cadastrar_professor_ajax')?>";
     }
-
+    else
+    {
+        url = "<?php echo base_url('professor/alterar_professor_ajax')?>";
+    }
     // ajax adding data to database
     $.ajax({
         url : url,
@@ -123,7 +126,6 @@ function salvar_professor()
         dataType: "JSON",
         success: function(data)
         {
-
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_aluno').modal('hide');
@@ -153,8 +155,6 @@ function salvar_professor()
         },
         error: function (jqXHR, textStatus, errorThrown)
         {
-            //$('#modal_alerta_erro').modal('show'); // show bootstrap modal
-            //$('.alerta-msg').text('ERRO :('); // Set Title to Bootstrap modal title
             $('#modal_alerta_erro').modal('show'); // show bootstrap modal
             $('.alerta-msg').text('ERRO :('); // Set Title to Bootstrap modal title
             $('#btnSalvar_professor').text('Salvar'); //change button text
@@ -208,29 +208,30 @@ function autentica_dados_login()
     });
 }
 
-function edit_person(id)
+function editar_professor(id)
 {
-    save_method = 'update';
-    $('#form')[0].reset(); // reset form on modals
+    save_method = 'alterar_professor';
+    $('#form_professor')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
 
     //Ajax Load data from ajax
     $.ajax({
-        url : "<?php echo base_url('person/ajax_edit/')?>/" + id,
+        url : "<?php echo base_url('professor/editar_professor_ajax')?>/" + id,
         type: "GET",
         dataType: "JSON",
         success: function(data)
         {
+            $('[name="id"]').val(data.id_professor);
+            $('[name="nome"]').val(data.nome);
+            $('[name="dt_nascimento"]').val(data.date);
+            $('[name="telefone"]').val(data.telefone);
+            $('[name="copetencia"]').val(data.copetencia);
+            $('[name="email"]').val(data.email);
+            $('[name="area_id"]').val(data.area_id);
 
-            $('[name="id"]').val(data.id);
-            $('[name="firstName"]').val(data.firstName);
-            $('[name="lastName"]').val(data.lastName);
-            $('[name="gender"]').val(data.gender);
-            $('[name="address"]').val(data.address);
-            $('[name="dob"]').datepicker('update',data.dob);
-            $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Edit Person'); // Set title to Bootstrap modal title
+            $('#modal_professor').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Editar Dados'); // Set title to Bootstrap modal title
 
         },
         error: function (jqXHR, textStatus, errorThrown)
@@ -244,6 +245,8 @@ function reload_table()
 {
     table.ajax.reload(null,false); //reload datatable ajax 
 }
+
+
 
 function delete_person(id)
 {

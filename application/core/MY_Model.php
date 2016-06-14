@@ -22,11 +22,10 @@ class MY_Model extends CI_Model
 		return $this->db->delete($tabela);
 	}
 
-	public function atualizar($tabela, $dados, $referencia, $id)
+	public function atualizar($tabela, $dados, $where)
 	{
-		$this->db->where($referencia, $id);
-
-		return $this->db->update($tabela, $dados);
+		$this->db->update($tabela, $dados, $where);
+		return $this->db->affected_rows();
 	}
 	
 	function GetAll($tabela, $sort = 'id', $order = 'asc')
