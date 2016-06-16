@@ -1,26 +1,16 @@
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-  <!-- Content Header (Page header) -->
-  <section class="content-header">
-    <ol class="breadcrumb">
-      <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-      <li class="active">Dashboard</li>
-    </ol>
-  </section>
-  <!-- Main content -->
-  <section class="content">
-  </section>
-  <!-- /.content -->
+<div id="page-wrapper">
+
 </div>
-<!-- /.content-wrapper -->
 
 <!-- jQuery 2.1.4 -->
-<script src="<?php echo base_url('assests/plugins/jQuery/jQuery-2.1.4.min.js')?>" type="text/javascript"></script>
+<script src="<?php echo base_url('assets/jquery/dist/jquery.min.js')?>"></script>
+<!--Ajax-->
+<script src="<?php echo base_url('application/views/ajax/acoes_ajax.js')?>" type="text/javascript"></script>
 <!-- Bootstrap 3.3.2 JS -->
-<script src="<?php echo base_url('assests/bootstrap/js/bootstrap.js')?>" type="text/javascript"></script>
-<!-- AdminLTE App -->
-<script src="<?php echo base_url('assests/dist/js/app.js')?>" type="text/javascript"></script>
-<!-- SlimScroll 1.3.0 -->
-<script src="<?php echo base_url('assests/plugins/slimScroll/jquery.slimscroll.js')?>" type="text/javascript"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="<?php echo base_url('assests/dist/js/demo.js')?>" type="text/javascript"></script>
+<script src="<?php echo base_url('assets/bootstrap/dist/js/bootstrap.min.js')?>" type="text/javascript"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="<?php echo base_url('assets/metisMenu/dist/metisMenu.min.js')?>"></script>
+<!-- Custom Theme JavaScript -->
+<script src="<?php echo base_url('lib/js/sb-admin-2.js')?>"></script>
+
+

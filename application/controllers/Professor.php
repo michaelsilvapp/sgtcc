@@ -8,6 +8,7 @@ class Professor extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('M_Professor','minha_model');
+		$this->load->library('M_tlm');
 	}
 
 	public function verifica_session()
@@ -20,7 +21,6 @@ class Professor extends CI_Controller
 
 	public function cadastrar_professor_ajax()
 	{
-		$this->load->library('M_tlm');
 		$this->validacao('insert');
 		$data = array(
 				'nome' => $this->input->post('nome'),
@@ -43,34 +43,30 @@ class Professor extends CI_Controller
 	public function alterar_professor_ajax()
 	{
 		$this->verifica_session();
-		$this->load->library('M_tlm');
 		$this->validacao('update');
 		$data = array(
 				'nome' => $this->input->post('nome'),
 				'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')),
 				'sexo' => $this->input->post('sexo'),
 				'telefone' => $this->input->post('telefone'), 
+				'area_id' => $this->input->post('area_id'),
 				'copetencia' => $this->input->post('copetencia')
 			);
-		$this->minha_model->atualizar('tb_professores',  $data, array('id_professor' => $this->input->post('id'))); 
+		$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->input->post('id'))); 
 		echo json_encode(array("status" => TRUE));
 	}
 
 	public function lista_dados()
 	{
-		
-		$list = $this->minha_model->consulta_condicional('*', 'tb_professores', array('id_professor' => $this->session->userdata('id')));
+		$this->verifica_session();
+		$this->load->library('M_tlm');
+ 		$list['dados'] = $this->minha_model->consulta_inner_professor('prof.nome, prof.dt_nascimento, prof.telefone, prof.sexo, prof.cpf, prof.email, prof.copetencia ,tb_areas.area', 'tb_professores AS prof', 'tb_areas', 
+		'prof.area_id = tb_areas.id_area AND prof.id_professor = '. $this->session->userdata('id') );
 
-		$row = array();
-		foreach ($list as $person)
-		{
-			$row[] = $person->id_professor;
-			$row[] = $person->nome;
-			$row[] = $person->email;
-			$data[] = $row;
-		}
-		$output = array("dados" => $data);
-		echo json_encode($output);
+
+		$list['dados']->dt_nascimento = $this->m_tlm->data_br($list['dados']->dt_nascimento);
+		$list['dados']->sexo = ucfirst($list['dados']->sexo);
+  		echo json_encode($list);
 	}
 
 	private function validacao($opcao)
@@ -224,17 +220,17 @@ class Professor extends CI_Controller
 
 	public function dados()
 	{
+		$this->verifica_session();
+		$data = array('myname' => $this->session->userdata('nome'));
 		$this->load->view('inc/head');
-		$this->load->view('inc/menu');
-		$this->load->view('usuarios/professor/dados');
-		$this->load->view('usuarios/usuarios_ajax');
-		$this->load->view('login/acoes_ajax');
+		$this->parser->parse('inc/menu', $data);
+		$this->parser->parse('usuarios/professor/dados', $data);
 	}
 
 	public function editar_professor_ajax($id)
 	{
-		$this->load->library('M_tlm');
-		$data = $this->minha_model->retorna_id_professor('tb_professores', $id);
+		$this->verifica_session();
+		$data = $this->minha_model->retorna_id_professor('prof.nome, prof.id_professor, prof.dt_nascimento, prof.sexo, prof.copetencia, prof.telefone, prof.area_id', 'tb_professores AS prof', $id);
 		$data->date = $this->m_tlm->data_br($data->dt_nascimento);
 		echo json_encode($data);
 	}

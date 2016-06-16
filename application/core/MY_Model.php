@@ -53,7 +53,6 @@ class MY_Model extends CI_Model
 		return $this->db->select($asteristico)->from($tabela)->where($condicao)->get()->result();
 	}
 
-	##SELECT tbfuncionarios.*, tbcontatos.*, tbcontatos.id AS id_contato FROM tbfuncionarios INNER JOIN tbcontatos ON tbcontatos.id_funcionario = tbfuncionarios.id AND tbcontatos.id = 3
 	public function consulta_inner($asteristico, $tabela1, $tabela2, $on, $condicao = null)
 	{
 		return $this->db->select($asteristico)->from($tabela1)->join($tabela2, $on, 'INNER')->get()->result();

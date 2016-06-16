@@ -20,10 +20,11 @@ class Home extends CI_Controller
 
 	public function index()
 	{
+		$data = array('myname' => $this->session->userdata('nome'));
 		$this->load->view('inc/head');
-		$this->load->view('inc/menu');
+		$this->parser->parse('inc/menu', $data);
 		$this->load->view('home/index');
-		$this->load->view('usuarios/usuarios_ajax');
+		//$this->load->view('usuarios/usuarios_ajax');
 		//$this->load->view('inc/footer');
 	}
 }
