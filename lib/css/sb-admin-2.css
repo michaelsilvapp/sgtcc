@@ -5,13 +5,43 @@
  */
 
 body {
-    background-color: #f8f8f8;
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#45484d+0,000000+100;Black+3D+%231 */
+background: #222D32; /* Old browsers */
 }
 
 #wrapper {
     width: 100%;
 }
 
+/* Efeito Menu */
+.nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: black;
+}
+
+.navbar-inverse {
+    background-color: #222D32;
+    border-color: #222D32;
+}
+
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 12px 18px;
+}
+
+.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+    background-color: black;
+    border-color: #337ab7;
+}
+a {
+    color: #9d9d9d;
+    text-decoration: none;
+}
+a:hover, a:focus {
+    color: white;
+    text-decoration: none;
+}
 #page-wrapper {
     padding: 0 15px;
     min-height: 568px;
@@ -95,11 +125,11 @@ body {
 }
 
 .sidebar ul li {
-    border-bottom: 1px solid #e7e7e7;
+    border-bottom: 1px solid #222D32;
 }
 
 .sidebar ul li a.active {
-    background-color: #eee;
+    background: #222D32; /* Old browsers */
 }
 
 .sidebar .arrow {

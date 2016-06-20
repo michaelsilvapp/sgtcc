@@ -1,7 +1,7 @@
 <body>
 <div id="wrapper">
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -221,23 +221,32 @@
                 <!-- /.dropdown -->
             </ul>
             <!-- /.navbar-top-links -->
-
-            <div class="navbar-default sidebar" role="navigation">
+            <div class="navbar-inverse sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <span class="input-group-btn">
+                                <button class="btn btn-default" type="button">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </span>
+                            </div>
+                            <!-- /input-group -->
+                        </li>
                         <?php if($this->session->userdata('user') == 'professor'){ ?>
-                         <li><a href="<?php echo base_url('home')?>"><i class="fa fa-calendar"></i> <span>Home</span></a></li>
-                         <li><a href="<?php echo base_url('professor/dados')?>"><i class="fa fa-calendar"></i> <span>Meus Dados</span></a></li>
-                         <li><a href="<?php echo base_url()?>"><i class="fa fa-calendar"></i> <span>Registro Temas</span></a></li>
-                         <li><a href=""><i class="fa fa-calendar"></i> <span>Valide Temas</span></a></li>
-                         <li><a href=""><i class="fa fa-calendar"></i> <span>Todos os Temas</span></a></li>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Home</a></li>
+                          <li><a href="<?php echo base_url('professor')?>"><i class="fa fa-dashboard fa-fw"></i> Meus Dados</a></li>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Registre Temas</a></li>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Avalie temas Sugerigos</a></li>
                         <?php } elseif($this->session->userdata('user') == 'aluno'){?>
-                         <li><a href="<?php echo base_url('home')?>"><i class="fa fa-calendar"></i> <span>Home</span></a></li>
-                         <li><a href=""><i class="fa fa-calendar"></i> <span>Todos os Temas</span></a></li>
+
                         <?php }?>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
             </div>
+ 
             <!-- /.navbar-static-side -->
         </nav>
