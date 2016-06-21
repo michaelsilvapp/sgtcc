@@ -13,7 +13,7 @@ $(document).ready(function()
         {    
             $.each(data, function(k, v)
             {
-                html +=  '<ul class="list-group">';
+                html +=   '<ul class="list-group">';
                 html +=     '<li class="list-group-item"><b>Nome:</b> '+v.nome+'</li>';
                 html +=     '<li class="list-group-item"><b>CPF:</b> '+v.cpf+'</li>';
                 html +=     '<li class="list-group-item"><b>Data de Nascimento:</b> ' +v.dt_nascimento+'</li>';
@@ -22,7 +22,8 @@ $(document).ready(function()
                 html +=     '<li class="list-group-item"><b>Minhas Copetencias :</b> '+v.copetencia+'</li>';
                 html +=     '<li class="list-group-item"><i class="fa fa-phone"></i> <b>Contato:</b> '+v.telefone+'</li>';
                 html +=     '<li class="list-group-item"><i class="fa fa-envelope"></i> <b>Email:</b> '+v.email+'</li>';
-                html +=  '</ul>';
+                html +=   '</ul>';
+
             });
         }
         else
@@ -43,12 +44,21 @@ $(document).ready(function()
 
     $.getJSON(base_url+'professor/lista_dados_f', function(data)
     {   
-        $.each(data, function(k, v)
+        if(data)
+        {    
+            $.each(data, function(k, v)
+            {
+                html += '<div class="col-md-6">';
+                html +=  '<ul class="list-group">';
+                html +=     '<li class="list-group-item"><b>Formado em:</b> '+v.curso+'</li>';
+                html +=  '</ul>';
+                html += '</div>';
+            });
+        }
+        else
         {
-            html +=  '<ul class="list-group">';
-            html +=     '<li class="list-group-item"><b>Formado em:</b> '+v.curso+'</li>';
-            html +=  '</ul>';
-        });
+            html += '<li class="list-group-item"><b>Nada encontrado:</b></li>';   
+        }
         lista.html(html);
     });
 });
@@ -122,7 +132,6 @@ function add_professor()
     $('.modal-title').text('Professor'); // Set Title to Bootstrap modal title
 }
 
-
 function add_senha()
 {
     save_method = 'alterar_senha';
@@ -133,6 +142,17 @@ function add_senha()
     $('#modal_user').modal('hide');//fechar o modal de buttons
     $('#modal_senha').modal('show'); // show bootstrap modal
     $('.modal-title').text('Alterar Senha'); // Set Title to Bootstrap modal title
+}
+
+function add_img()
+{
+    save_method = 'alterar_img';
+    msg = 'alterar';
+    $('#form_img')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+    $('#modal_img').modal('show'); // show bootstrap modal
+    $('.modal-title').text('Alterar Imagem'); // Set Title to Bootstrap modal title
 }
 
 function salvar()
@@ -337,6 +357,7 @@ function autentica_dados_login()
 function editar_professor(id)
 {
     save_method = 'alterar_professor';
+    msg = 'alterar';
     $('#form_user')[0].reset(); // reset form on modals
     $('.form-group').removeClass('has-error'); // clear error class
     $('.help-block').empty(); // clear error string
@@ -349,14 +370,11 @@ function editar_professor(id)
         dataType: "JSON",
         success: function(data)
         {
-            $('[name="id"]').val(data.id_professor);
             $('[name="nome"]').val(data.nome);
             $('[name="dt_nascimento"]').val(data.date);
             $('[name="telefone"]').val(data.telefone);
             $('[name="copetencia"]').val(data.copetencia);
-            $('[name="email"]').val(data.email);
             $('[name="area_id"]').val(data.area_id);
-            $('[name="cpf"]').val(data.cpf);
 
             $('#modal_user').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Editar Dados'); // Set title to Bootstrap modal title

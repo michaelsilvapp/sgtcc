@@ -24,7 +24,8 @@
     "bootstrap": "3.3.6",
     "metisMenu": "^2.5.2",
     "font-awesome": "^4.6.3",
-    "jquery.inputmask": "^3.3.1"
+    "jquery.inputmask": "^3.3.1",
+    "Jcrop": "^2.0.4"
   },
   "main": ""
 }

@@ -1,15 +1,16 @@
+<!-- Folha de estilo do plugin jCrop -->
+<link rel="stylesheet" href="<?php echo base_url('assets/Jcrop/css/Jcrop.css')?>" type="text/css" />
 <div id="page-wrapper">
    <div class="row">
       <div class="col-md-12">
          <div class="card hovercard">
             <div class="card-background">
-               <img class="card-bkimg" alt="" src="<?php echo base_url('imagens/img_sistema/use.png')?>">
+               <img class="card-bkimg" alt="" src="<?php echo base_url('imagens/img_upload/{myimg}')?>" >
                <!-- http://lorempixel.com/850/280/people/9/ -->
             </div>
             <div class="useravatar">
-               <img alt="" src="<?php echo base_url('imagens/img_sistema/use.png')?>" width="200" height="200">
-            </div>
-            <div class="card-info"> <span class="card-title">{myname}</span></div>
+               <img alt="" src="<?php echo base_url('imagens/img_upload/{myimg}')?>">
+            </div>  
          </div>
          <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
             <div class="btn-group" role="group">
@@ -29,16 +30,27 @@
                   <div class="row">
                      <div class="col-md-2">
                         <div class="form-group">
-                           <button type="button" onclick="editar_professor(<?php echo $this->session->userdata('id');?>) "class="btn btn-primary btn-circle btn-lg">
+                           <button type="button" onclick="editar_professor(<?php echo $this->session->userdata('id');?>)" 
+                            class="btn btn-primary btn-circle btn-lg">
                               <i class="fa fa-edit"></i>
                            </button>
                         </div>
                      </div>
-
-                        <div class="col-md-10" id="container_dados_p">
+                        <div class="col-md-10 col-md--2" id="container_dados_p">
                            <div id="lista_dados_p"></div>
                         </div>
-
+                        <div class="form-group">
+                              <div class="col-md-4 col-md-offset-2">
+                                 <button type="button" class="btn btn-block btn-primary" onclick="add_img()">
+                                 <span class="fa fa-photo"></span> Alterar imagem do perfil </button>
+                              </div>
+                        </div>
+                        <div class="form-group">
+                              <div class="col-md-6">
+                                 <button type="button" class="btn btn-block btn-primary" onclick="add_senha()">
+                                 <span class="fa fa-key"></span> Alterar Senha </button>
+                              </div>
+                        </div>
                   </div>
                </div>
                <div class="tab-pane fade in" id="tab2">
@@ -52,8 +64,8 @@
                      </div>
                   </div>
                      <div class="row">
-                        <div class="col-md-6" id="container_dados_f">
-                              <div id="lista_dados_f"></div>
+                        <div id="container_dados_f">
+                           <div id="lista_dados_f"></div>
                         </div>
                      </div>
                   </div>
@@ -106,12 +118,6 @@
                         <div class="col-md-9">
                            <input name="telefone" class="form-control " type="text" data-inputmask='"mask": "(99)9999-9999"' data-mask  >
                            <span class="help-block"></span>
-                        </div>
-                     </div>
-                     <div class="form-group">
-                        <label class="control-label col-md-3">Senha</label>
-                        <div class="col-md-9">
-                           <button type="button" class="btn btn-block btn-primary" onclick="add_senha()"><span class="fa fa-key"></span> Alterar Senha </button>
                         </div>
                      </div>
                      <div class="form-group">
@@ -178,8 +184,7 @@
                            <span class="help-block"></span>
                         </div>
                      </div>
-                     <input type="hidden" value="" name="id"/> 
-                     <div class="modal-footer">
+                            <div class="modal-footer">
                         <button type="button" id="btn_salvar" name="btn_salvar" onclick="alterar_senha()"  class="btn btn-primary">Salvar</button>
                         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
                      </div>
@@ -190,6 +195,60 @@
       </div>
    </div>
 </div>
+
+<!-- Bootstrap modal -->
+<div class="modal fade in" id="modal_img" data-backdrop="static" data-keyboard="false" role="dialog">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 class="modal-title"></h3>
+         </div>
+         <div class="modal-body form">
+            <div class="box box-primary flat">
+               <div class="box-body">
+               <div class="row">
+               <div class="col-md-12">
+                  <form action="<?=base_url('professor/recortar')?>" id="form_img" method="POST" class="form-horizontal" role="form" enctype="multipart/form-data">
+                        <div class="input-group">
+                           <span class="input-group-btn">
+                              <button id="fake-file-button-browse" type="button" class="btn btn-default">
+                                 <span class="glyphicon glyphicon-file"></span>
+                              </button>
+                           </span>
+                           <input type="file" name="imagem" id="seleciona-imagem" style="display:none">
+                           <input type="text" id="fake-file-input-name" disabled="disabled" 
+                           placeholder="Nenhum arquivo selecionado" class="form-control">
+                        </div>
+                     </div>
+  
+                  <div class="col-md-12">
+                     <div id="imagem-box">
+                        <img src="" class="img-responsive hidden" id="visualizacao_img" />
+                     </div>
+                     <input type="hidden" id="x" name="x" />
+                     <input type="hidden" id="y" name="y" />
+                     <input type="hidden" id="wcrop" name="wcrop"  />
+                     <input type="hidden" id="hcrop" name="hcrop"  />
+                     <input type="hidden" id="wvisualizacao" name="wvisualizacao"  />
+                     <input type="hidden" id="hvisualizacao" name="hvisualizacao" />
+                     <input type="hidden" id="woriginal" name="woriginal" />
+                     <input type="hidden" id="horiginal" name="horiginal" />
+                  </div>
+               </div>
+                     <div class="modal-footer">
+                        <button type="subimit" id="recortar-imagem" class="btn btn-primary">Salvar</button>
+                        <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
+                     </div>
+                     
+                  </form>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
 
 <!-- Bootstrap modal -->
 <div class="modal fade in" id="modal_formacao" data-backdrop="static" data-keyboard="false" role="dialog">
@@ -220,19 +279,13 @@
                            <span class="help-block"></span>
                         </div>
                      </div>
-   
-
                    <div class="form-group">
                      <label class="control-label col-md-3">Curso</label>
                         <div class="col-md-9">
-                          <select name="curso" id="curso" class="form-control">
-            
-                          </select>
+                          <select name="curso" id="curso" class="form-control"></select>
                           <span class="help-block"></span>
                         </div>
-                     </div>
-
-                     
+                     </div>                     
                      <div class="modal-footer">
                         <button type="button" id="btn_salvar" name="btn_salvar" onclick="salvar_formacao()"  class="btn btn-primary">Salvar</button>
                         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
@@ -274,8 +327,25 @@
 <script src="<?php echo base_url('application/views/ajax/acoes_ajax.js')?>" type="text/javascript"></script>
 <!-- Metis Menu Plugin JavaScript -->
 <script src="<?php echo base_url('assets/metisMenu/dist/metisMenu.min.js')?>"></script>
+<!-- input files -->
+<script src="<?php echo base_url('lib/js/bootstrap-inputfiles.js')?>"></script>
 <!-- Custom Theme JavaScript -->
 <script src="<?php echo base_url('lib/js/sb-admin-2.js')?>"></script>
 <!-- JQuery Masck -->
 <script src="<?php echo base_url('assets/jquery.inputmask/dist/jquery.inputmask.bundle.js')?>"></script>
-   
+<!-- Jcrop -->
+<script src="<?php echo base_url('assets/Jcrop/js/Jcrop.js')?>"></script>
+<!-- Scripts do Jcrop -->
+<script src="<?php echo base_url('lib/js/scripts.js')?>"></script>
+
+<script type="text/javascript">
+// Fake file upload
+document.getElementById('fake-file-button-browse').addEventListener('click', function() {
+   document.getElementById('seleciona-imagem').click();
+});
+
+document.getElementById('seleciona-imagem').addEventListener('change', function() {
+   document.getElementById('fake-file-input-name').value = this.value;
+
+});
+</script>
