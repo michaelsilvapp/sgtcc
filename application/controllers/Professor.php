@@ -120,7 +120,6 @@
 			$senha_atual = $this->m_tlm->criptografar($this->input->post('senha_atual'));
 			$dados['senha'] = $this->minha_model->get_id_p('senha', 'tb_professores', $this->session->userdata('id'))->result();
 
-			
 			if($dados['senha'][0]->senha == $senha_atual)
 			{
 				$data = array('senha' => $this->m_tlm->criptografar($this->input->post('nova_senha')));
@@ -247,12 +246,18 @@
 						$data['campo'][] = 'confirmar'; $data['msg_erro'][] = form_error('confirmar', ' ', ' '); $data['status'] = FALSE;
 					endif;
 					
-					if($this->form_validation->set_rules('cpf', 'CPF', 'required|is_unique[tb_professores.cpf]|is_unique[tb_alunos.email]')->run() == TRUE):
+					if($this->form_validation->set_rules('cpf', 'CPF', 'required|is_unique[tb_professores.cpf]|is_unique[tb_alunos.cpf]')->run() == TRUE):
 						$data['status'] = TRUE;
 					else:
 						$data['campo'][] = 'cpf'; $data['msg_erro'][] = form_error('cpf', ' ', ' '); $data['status'] = FALSE;
 					endif;
 					
+					if($this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[tb_professores.email]|is_unique[tb_alunos.email]')->run() == TRUE):
+						$data['status'] = TRUE;
+					else:
+						$data['campo'][] = 'email'; $data['msg_erro'][] = form_error('email', ' ', ' '); $data['status'] = FALSE;
+					endif;
+
 					if($this->form_validation->set_rules('dt_nascimento', 'Data de Nascimento', 'required|min_length[9]|addslashes|trim')->run() == TRUE):
 						$data['status'] = TRUE;
 					else:
@@ -361,6 +366,7 @@
 			// Calcula os tamanhos de ponto de corte e posição
 			// de forma proporcional em relação ao tamanho da
 			// imagem original
+			$tamanhos = $this->CalculaPercetual($this->input->post());
 
 			// Define as configurações para o recorte da imagem
 			// Biblioteca a ser utilizada
@@ -373,12 +379,16 @@
 			$configCrop['maintain_ratio']= FALSE;
 			// Qualidade da imagem
 			$configCrop['quality']			 = 100;
-			
+			// Tamanho do recorte
+			$configCrop['width']         = $tamanhos['wcrop'];
+			$configCrop['height']        = $tamanhos['hcrop'];
+			// Ponto de corte (eixos x e y)
+			$configCrop['x_axis']        = $tamanhos['x'];
+			$configCrop['y_axis']        = $tamanhos['y'];
 
 			// Aplica as configurações para a library image_lib
 			$this->image_lib->initialize($configCrop);
 
-			
 			// Verifica se o recorte foi efetuado ou não
 			// Em caso de erro carrega a home exibindo as mensagens
 			// Em caso de sucesso envia o usuário para a tela
@@ -392,18 +402,57 @@
 			else
 			{
 				// Define a URL da imagem gerada após o recorte
-				$urlImagem = base_url('uploads/crops/'.$dadosImagem['file_name']);
+				$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
+
 				// Grava a informação na sessão
 				$this->session->set_flashdata('urlImagem', $urlImagem);
+
 				// Grava os dados da imagem recortada na sessão
-				$this->session->set_flashdata('dadosImagem', $dadosImagem['file_name']);
-				unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
-				// Redireciona o usuário para a tela de visualização dos dados
-				$data_img = array('img_perfil' => $dadosImagem['file_name']);
-				$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));
+				$this->session->set_flashdata('dadosImagem', $dadosImagem);
+
+				// Grava os dados da imagem original na sessão
+				$this->session->set_flashdata('dadosCrop', $tamanhos);
+
 				
+				unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
+
+				$data_consulta['img'] = $this->minha_model->get_id_p('img_perfil', 'tb_professores', $this->session->userdata('id'))->result();
+
+				if($data_consulta['img'][0]->img_perfil == 'use.png')
+				{
+					$data_img = array('img_perfil' => $dadosImagem['file_name']);
+					$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));	
+				}
+				else 
+				{
+					$data_img = array('img_perfil' => $dadosImagem['file_name']);
+					$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));
+					unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
+				}	
+				// Redireciona o usuário para a tela de visualização dos dados
 				redirect('professor');
 			}
 		}
 	}
+
+
+	private function CalculaPercetual($dimensoes)
+	{
+		// Verifica se a largura da imagem original é
+		// maior que a da área de recorte, se for calcula o tamanho proporcional
+		if($dimensoes['woriginal'] > $dimensoes['wvisualizacao'])
+		{
+			$percentual = $dimensoes['woriginal'] / $dimensoes['wvisualizacao'];
+
+			$dimensoes['x'] = round($dimensoes['x'] * $percentual);
+			$dimensoes['y'] = round($dimensoes['y'] * $percentual);
+			$dimensoes['wcrop'] = round($dimensoes['wcrop'] * $percentual);
+			$dimensoes['hcrop'] = round($dimensoes['hcrop'] * $percentual);
+		}
+
+		// Retorna os valores a serem utilizados no processo de recorte da imagem
+		return $dimensoes;
+	}
+
+
 }

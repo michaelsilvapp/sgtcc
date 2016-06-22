@@ -1,5 +1,6 @@
-<!-- Folha de estilo do plugin jCrop -->
-<link rel="stylesheet" href="<?php echo base_url('assets/Jcrop/css/Jcrop.css')?>" type="text/css" />
+<!-- Folha de estilo do plugin jCrop   //echo base_url('assets/Jcrop/css/Jcrop.css')?> -->
+<link rel="stylesheet" href="<?php echo base_url('assets/Jcrop/css/jquery.Jcrop.css')?>" type="text/css" />
+
 <div id="page-wrapper">
    <div class="row">
       <div class="col-md-12">
@@ -162,7 +163,7 @@
          <div class="modal-body form">
             <div class="box box-primary flat">
                <div class="box-body">
-                  <form action="#" id="form_senha" class="form-horizontal">
+                  <form action="#" id="form_senha" >
                      <div class="form-group">
                         <label class="control-label col-md-3">Senha atual</label>
                         <div class="col-md-9">
@@ -207,37 +208,43 @@
          <div class="modal-body form">
             <div class="box box-primary flat">
                <div class="box-body">
-               <div class="row">
+             <div class="row">
                <div class="col-md-12">
-                  <form action="<?=base_url('professor/recortar')?>" id="form_img" method="POST" class="form-horizontal" role="form" enctype="multipart/form-data">
+                  <form action="<?=base_url('professor/recortar')?>" id="form_img" method="POST" enctype="multipart/form-data">
+                     <div class="form-group">
                         <div class="input-group">
                            <span class="input-group-btn">
-                              <button id="fake-file-button-browse" type="button" class="btn btn-default">
-                                 <span class="glyphicon glyphicon-file"></span>
+                              <button id="fake-file-button-browse" type="button" class="btn btn-primary">
+                                 <span class="fa fa-photo"></span> Alterar imagem do perfil </button>
                               </button>
                            </span>
                            <input type="file" name="imagem" id="seleciona-imagem" style="display:none">
                            <input type="text" id="fake-file-input-name" disabled="disabled" 
                            placeholder="Nenhum arquivo selecionado" class="form-control">
+   
                         </div>
                      </div>
-  
-                  <div class="col-md-12">
-                     <div id="imagem-box">
-                        <img src="" class="img-responsive hidden" id="visualizacao_img" />
                      </div>
-                     <input type="hidden" id="x" name="x" />
-                     <input type="hidden" id="y" name="y" />
-                     <input type="hidden" id="wcrop" name="wcrop"  />
-                     <input type="hidden" id="hcrop" name="hcrop"  />
-                     <input type="hidden" id="wvisualizacao" name="wvisualizacao"  />
-                     <input type="hidden" id="hvisualizacao" name="hvisualizacao" />
-                     <input type="hidden" id="woriginal" name="woriginal" />
-                     <input type="hidden" id="horiginal" name="horiginal" />
                   </div>
-               </div>
+               <div class="row">
+                  <div class="col-md-12">
+  
+                        <div id="imagem-box"><img src="" class="img-responsive hidden" id="visualizacao_img" /></div>
+
+                        <input type="hidden" id="x" name="x" />
+                        <input type="hidden" id="y" name="y" />
+                        <input type="hidden" id="wcrop" name="wcrop"  />
+                        <input type="hidden" id="hcrop" name="hcrop"  />
+                        <input type="hidden" id="wvisualizacao" name="wvisualizacao"  />
+                        <input type="hidden" id="hvisualizacao" name="hvisualizacao" />
+                        <input type="hidden" id="woriginal" name="woriginal" />
+                        <input type="hidden" id="horiginal" name="horiginal" />
+
+                  </div>
+                </div>
+    
                      <div class="modal-footer">
-                        <button type="subimit" id="recortar-imagem" class="btn btn-primary">Salvar</button>
+                        <button type="subimit" id="recortar-imagem" class="btn btn-primary hidden">Salvar</button>
                         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
                      </div>
                      
@@ -323,20 +330,18 @@
 <script src="<?php echo base_url('assets/jquery/dist/jquery.min.js')?>"></script>
 <!-- Bootstrap 3.3.2 JS -->
 <script src="<?php echo base_url('assets/bootstrap/dist/js/bootstrap.min.js')?>" type="text/javascript"></script>
+<!-- Jcrop -->
+<script src="<?php echo base_url('assets/Jcrop/js/jquery.Jcrop.min.js')?>"></script> 
+<!-- Scripts do Jcrop -->
+<script src="<?php echo base_url('lib/js/scripts.js')?>"></script>
 <!--Ajax-->
 <script src="<?php echo base_url('application/views/ajax/acoes_ajax.js')?>" type="text/javascript"></script>
 <!-- Metis Menu Plugin JavaScript -->
 <script src="<?php echo base_url('assets/metisMenu/dist/metisMenu.min.js')?>"></script>
-<!-- input files -->
-<script src="<?php echo base_url('lib/js/bootstrap-inputfiles.js')?>"></script>
 <!-- Custom Theme JavaScript -->
 <script src="<?php echo base_url('lib/js/sb-admin-2.js')?>"></script>
 <!-- JQuery Masck -->
 <script src="<?php echo base_url('assets/jquery.inputmask/dist/jquery.inputmask.bundle.js')?>"></script>
-<!-- Jcrop -->
-<script src="<?php echo base_url('assets/Jcrop/js/Jcrop.js')?>"></script>
-<!-- Scripts do Jcrop -->
-<script src="<?php echo base_url('lib/js/scripts.js')?>"></script>
 
 <script type="text/javascript">
 // Fake file upload
