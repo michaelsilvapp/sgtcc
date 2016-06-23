@@ -210,7 +210,7 @@
                <div class="box-body">
              <div class="row">
                <div class="col-md-12">
-                  <form action="<?=base_url('professor/recortar')?>" id="form_img" method="POST" enctype="multipart/form-data">
+                  <form action="<?=base_url('professor/edita_imagem')?>" id="form_img" method="POST" enctype="multipart/form-data">
                      <div class="form-group">
                         <div class="input-group">
                            <span class="input-group-btn">
@@ -293,6 +293,7 @@
                           <span class="help-block"></span>
                         </div>
                      </div>                     
+                     <input type="hidden" name="id_curso_professor">
                      <div class="modal-footer">
                         <button type="button" id="btn_salvar" name="btn_salvar" onclick="salvar_formacao()"  class="btn btn-primary">Salvar</button>
                         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>

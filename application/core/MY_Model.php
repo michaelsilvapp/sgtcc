@@ -52,15 +52,11 @@
 		{
 			$query = $this->db->order_by($sort, $order)->get($tabela);
 			
-			if ($query->num_rows() > 0)
-			{
+			if($query->num_rows() > 0):
 				return $query->result_array();
-			}
-			else
-			{
+			else:
 				throw new Exception("Nenhum valor retornado");
-			}
-
+			endif;
 		}
 
 		public
@@ -71,43 +67,68 @@
 		{
 			$query = $this->db->select($asteristico)->from($tabela)->get();
 
-			if($query->num_rows() > 0)
-			{
+			if($query->num_rows() > 0):
 				return $query->result();
-			}
-			else
-			{
+			else:
 				throw new Exception("Nenhum valor retornado");
-			}
+			endif;
 			
 		}
 
 		public
-		// -- Function Name : consulta_condicional
+		// -- Function Name : get_codicional
 		// -- Params : $asteristico, $tabela, $condicao
 		// -- Purpose : 
-		function consulta_condicional($asteristico, $tabela, $condicao)
+		function get_codicional($asteristico, $tabela, $condicao)
 		{
 			$query = $this->db->select($asteristico)->from($tabela)->where($condicao)->get();
 
-			if($query->num_rows() > 0)
-			{
-			   return $query->result();
-			}
-			else
-			{
+			if($query->num_rows() > 0):
+			   return $query;
+			else:
 				throw new Exception("Nenhum valor retornado");
-			}
+			endif;
 		}
 
 		public
-		// -- Function Name : consulta_inner
-		// -- Params : $asteristico, $tabela1, $tabela2, $on, $condicao = null
-		// -- Purpose : 
-		function consulta_inner($asteristico, $tabela1, $tabela2, $on, $condicao = null)
-		{
-			return $this->db->select($asteristico)->from($tabela1)->join($tabela2, $on, 'INNER')->get()->result();
-		}
+        // -- Function Name : get_one_inner
+        // -- Params : $asteristico, $tabela1, $tabela2, $on
+        // -- Descrição :  
+        /* SELECT (exbir) FROM tb1 AS cp 
+           INNER JOIN tb2 AS c ON c.id_curso = cp.curso_id 
+           INNER JOIN tb_professores AS p ON p.id_professor = cp.professor_id
+           AND p.id_professor = $paramentro 
+        */
+        function get_one_inner($asteristico, $tabela1, $tabela2, $on)
+        {
+            $query = $this->db->select($asteristico)->from($tabela1)->join($tabela2, $on)->get();
+        
+            if($query->num_rows() > 0):
+                return $query;
+            else:
+              throw new Exception("Nada encontrado", 2);
+            endif;
+        }
+
+        public
+        // -- Function Name : get_two_inner
+        // -- Params : $asteristico, $tabela1, $tabela2, $tabela3, $on1, $on2
+        // -- Descrição : 
+        /* SELECT (exbir) FROM tb1 AS cp 
+           INNER JOIN tb2 AS c ON c.id_curso = cp.curso_id 
+           INNER JOIN tb3 AS p ON p.id_professor = cp.professor_id
+           AND p.id_professor = $paramentro 
+        */
+        function get_two_inner($asteristico, $tabela1, $tabela2, $tabela3, $on1, $on2)
+        {
+            $query = $this->db->select($asteristico)->from($tabela1)->join($tabela2, $on1)->join($tabela3, $on2)->get();
+        
+            if($query->num_rows() > 0):
+                return $query;
+            else:
+              throw new Exception("Nada encontrado", 2);
+            endif;
+        }
 
 	}
 

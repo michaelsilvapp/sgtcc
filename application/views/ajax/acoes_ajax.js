@@ -17,7 +17,6 @@ $(document).ready(function()
                 html +=     '<li class="list-group-item"><b>Nome:</b> '+v.nome+'</li>';
                 html +=     '<li class="list-group-item"><b>CPF:</b> '+v.cpf+'</li>';
                 html +=     '<li class="list-group-item"><b>Data de Nascimento:</b> ' +v.dt_nascimento+'</li>';
-                html +=     '<li class="list-group-item"><b>Sexo:</b> '+v.sexo+'</li>';
                 html +=     '<li class="list-group-item"><b>Area de atuação:</b> '+v.area+'</li>';
                 html +=     '<li class="list-group-item"><b>Minhas Copetencias :</b> '+v.copetencia+'</li>';
                 html +=     '<li class="list-group-item"><i class="fa fa-phone"></i> <b>Contato:</b> '+v.telefone+'</li>';
@@ -51,6 +50,10 @@ $(document).ready(function()
                 html += '<div class="col-md-6">';
                 html +=  '<ul class="list-group">';
                 html +=     '<li class="list-group-item"><b>Formado em:</b> '+v.curso+'</li>';
+                html +=     '<li class="list-group-item">'
+                html +=         '<button type="button"  onclick="editar_formacao('+v.id_curso_professor+')" class="btn btn-primary btn-circle"> <i class="fa fa-edit"></i></button>';
+                html +=         '<button type="button" class="btn btn-danger btn-circle pull-right"><i class="fa fa-trash-o"></i></button>';
+                html +=     '</li>';
                 html +=  '</ul>';
                 html += '</div>';
             });
@@ -173,14 +176,7 @@ function salvar()
     {
         url = base_url + 'aluno/cadastrar_aluno';
     }
-    else if(save_method == 'nova_formacao')
-    {
-        url = base_url + 'professor/cadastrar_formacao';
-    }
-    else if(save_method == 'nova_formacao')
-    {
-        url = base_url + 'professor/cadastrar_formacao';
-    }
+    
 
     $.ajax({
         url : url,
@@ -192,7 +188,7 @@ function salvar()
             if(data.status) //if success close modal and reload ajax table
             {
                 $('#modal_user').modal('hide');
-                $('#modal_formacao').modal('hide');
+
                 $('#modal_alerta').modal('show'); // show bootstrap modal
                 if(msg == 'cadastro')
                 {
@@ -275,9 +271,16 @@ function salvar_formacao()
 {
     $('#btn_salvar').text('Salvando...'); //change button text
     $('#btn_salvar').attr('disabled',true); //set button disable 
-
+    if(save_method == 'nova_formacao')
+    {
+        url = base_url + 'professor/cadastrar_formacao';
+    }
+    else
+    {
+        url = base_url + 'professor/alterar_formacao';   
+    }
     $.ajax({
-        url : base_url + 'professor/cadastrar_formacao',
+        url : url,
         type: "POST",
         data: $('#form_formacao').serialize(),
         dataType: "JSON",
@@ -287,7 +290,17 @@ function salvar_formacao()
             {
                 $('#modal_formacao').modal('hide');
                 $('#modal_alerta').modal('show'); // show bootstrap modal
-                $('.alerta-msg').text('Cadastro realizado com sucesso'); // Set Title to Bootstrap modal title
+
+                if(msg == 'cadastro')
+                {
+                    $('.alerta-msg').text('Cadastro realizado com sucesso'); // Set Title to Bootstrap modal title
+                    
+                }
+                else if(msg == 'alterar')
+                {
+                     $('.alerta-msg').text('Alteração realizada com sucesso'); // Set Title to Bootstrap modal title
+                }
+                location.reload();
             }
             else
             {
@@ -378,6 +391,36 @@ function editar_professor(id)
 
             $('#modal_user').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Editar Dados'); // Set title to Bootstrap modal title
+
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+            alert('Error get data from ajax');
+        }
+    });
+}
+
+function editar_formacao(id)
+{
+    save_method = 'alterar_formacao';
+    msg = 'alterar';
+    $('#form_formacao')[0].reset(); // reset form on modals
+    $('.form-group').removeClass('has-error'); // clear error class
+    $('.help-block').empty(); // clear error string
+
+    //Ajax Load data from ajax
+    $.ajax({
+        url : base_url + 'professor/editar_formacao/' + id,
+        type: "GET",
+        dataType: "JSON",
+        success: function(data)
+        {
+            $('[name="tipo_curso"]').val(data.tipo_curso);
+            $('[name="curso"]:selected').val(data.curso);
+            $('[name="id_curso_professor"]').val(data.id_curso_professor);
+
+            $('#modal_formacao').modal('show'); // show bootstrap modal when complete loaded
+            $('.modal-title').text('Editar Curso'); // Set title to Bootstrap modal title
 
         },
         error: function (jqXHR, textStatus, errorThrown)

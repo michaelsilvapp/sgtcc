@@ -1,7 +1,7 @@
 <?php
 	defined('BASEPATH') OR exit('No direct script access allowed');
 	// -- Class Name : Professor
-	// -- Descrição : 
+	// -- Descrição : Classe com metodos de cadastro de informações de professores & validacoes e tratamentos 
 	// -- Created On : 
 	class Professor extends CI_Controller
 	{
@@ -22,10 +22,9 @@
 		// -- Descrição : 
 		function verifica_session()
 		{
-			if($this->session->userdata('logado') == FALSE)
-			{
+			if($this->session->userdata('logado') == FALSE):
 				redirect('/');
-			}
+			endif;
 		}
 
 		public
@@ -36,7 +35,7 @@
 		{
 			$this->verifica_session();
 
-			$dados['user'] = $this->minha_model->get_id_p('nome, img_perfil', 'tb_professores', $this->session->userdata('id'))->result();
+			$dados['user'] = $this->minha_model->get_codicional('nome, img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id') ))->result();
 			$data = array('myname' => $dados['user'][0]->nome, 'myimg' => $dados['user'][0]->img_perfil);
 			$this->load->view('inc/head');
 			$this->parser->parse('inc/menu', $data);
@@ -76,9 +75,9 @@
 			$this->verifica_session();
 			try 
 			{
-				$data = $this->minha_model->get_id_p('
+				$data = $this->minha_model->get_codicional('
                 nome, email, cpf, id_professor, dt_nascimento, sexo, copetencia, telefone, area_id', 
-                'tb_professores', $id)->row();
+                'tb_professores', array('id_professor' => $id))->row();
 				$data->date = $this->m_tlm->data_br($data->dt_nascimento);
 				echo json_encode($data);	
 			} 
@@ -87,7 +86,6 @@
 			   $data = FALSE;
                echo json_encode($data);
 			}
-			
 		}
 
 		public
@@ -118,25 +116,21 @@
 			$this->verifica_session();
 			$this->validacao('update_senha');
 			$senha_atual = $this->m_tlm->criptografar($this->input->post('senha_atual'));
-			$dados['senha'] = $this->minha_model->get_id_p('senha', 'tb_professores', $this->session->userdata('id'))->result();
+			$dados['senha'] = $this->minha_model->get_codicional('senha', 'tb_professores', $this->session->userdata('id'))->result();
 
-			if($dados['senha'][0]->senha == $senha_atual)
-			{
+			if($dados['senha'][0]->senha == $senha_atual):
 				$data = array('senha' => $this->m_tlm->criptografar($this->input->post('nova_senha')));
 				$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->session->userdata('id') ));
 				echo json_encode(array("status" => TRUE));
-			}
-			else
-			{
+			else:
 				$data['campo'][] = 'senha_atual';
 				$data['msg_erro'][] = 'A senha informada não confere com a anterior';
 				$data['status'] = FALSE;	
-				if($data['status'] === FALSE)
-				{
+				if($data['status'] === FALSE):
 					echo json_encode($data);
 					exit();
-				}
-			}
+				endif;
+			endif;
 		}
 
 		public
@@ -151,6 +145,42 @@
 		}
 
 		public
+		// -- Function Name : editar_formacao
+		// -- Params : 
+		// -- Descrição : 
+		function editar_formacao($id)
+		{
+			$this->verifica_session();
+			try 
+			{
+				$data = $this->minha_model->get_two_inner('
+                	*', 
+                	'tb_curso_professor AS cp', 
+                	'tb_cursos AS c', 'tb_professores AS p', 
+                	'cp.curso_id = c.id_curso', 
+                	'p.id_professor = cp.professor_id AND cp.id_curso_professor = '. $id)->row();
+				echo json_encode($data);	
+			} 
+			catch (Exception $e) 
+			{
+			   $data = FALSE;
+               echo json_encode($data);
+			}
+		}
+
+		public
+		// -- Function Name : alterar_formacao
+		// -- Params : 
+		// -- Descrição : 
+		function alterar_formacao()
+		{
+			$this->verifica_session();
+			$data = array('curso_id' => $this->input->post('curso'));
+			$this->minha_model->atualizar('tb_curso_professor', $data, array('id_curso_professor' =>  $this->input->post('id_curso_professor') ));
+			echo json_encode(array("status" => TRUE));
+		}
+
+		public
 		// -- Function Name : lista_dados_p
 		// -- Params : 
 		// -- Descrição : 
@@ -159,8 +189,8 @@
             $this->verifica_session();
             try
             {
-    			$list['dados'] = $this->minha_model->get_inner_p('
-                    p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
+    			$list['dados'] = $this->minha_model->get_one_inner('
+                     p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
                     'tb_professores AS p', 
                     'tb_areas AS a', 
                     'p.area_id = a.id_area AND p.id_professor = '. $this->session->userdata('id') )->row();
@@ -186,7 +216,12 @@
             $this->verifica_session();
             try
             {
-                $list = $this->minha_model->two_get_inner_p('c.curso, p.nome', 'tb_curso_professor AS cp', 'tb_cursos AS c', 'tb_professores AS p', 'cp.curso_id = c.id_curso', 'p.id_professor = cp.professor_id AND p.id_professor = '. $this->session->userdata('id'))->result_array();
+                $list = $this->minha_model->get_two_inner('
+                	c.curso, cp.id_curso_professor', 
+                	'tb_curso_professor AS cp', 
+                	'tb_cursos AS c', 'tb_professores AS p', 
+                	'cp.curso_id = c.id_curso', 
+                	'p.id_professor = cp.professor_id AND p.id_professor = '. $this->session->userdata('id'))->result_array();
 
                 echo json_encode($list);
             }
@@ -204,16 +239,86 @@
 		function busca_por_curso()
 		{
 			$this->verifica_session();
-			$data = $this->minha_model->consulta_condicional('*', 'tb_cursos', 'tipo_curso ='. $this->input->post('tipo_cursos'));
+			$data = $this->minha_model->get_codicional('*', 'tb_cursos', array('tipo_curso' => $this->input->post('tipo_cursos')))->result();
 			//'TecnÃ³logo' = 1 ,'TÃ©cnico' = 2,'GraduaÃ§Ã£o' = 3,'PÃ³s-graduaÃ§Ã£o' = 4,'Mestrado' = 5,'Doutorado' = 6,'Especialista' = 7
 			$option = "<option value=''>Selecione seu curso </option>";
-			foreach($data as $linha)
-			{
+			foreach($data as $linha):
 				$option .= "<option value='$linha->id_curso'>$linha->curso</option>";
-			}
+			endforeach; 
 
 			echo $option;
 		}
+
+		public
+		// -- Function Name : edita_imagem
+		// -- Params : 
+		// -- Descrição : 		
+		function edita_imagem()
+		{			
+			$configUpload['upload_path']   = './imagens/';
+			$configUpload['allowed_types'] = 'jpg|png';
+			$configUpload['encrypt_name']  = TRUE;
+			$this->upload->initialize($configUpload);
+
+			if(!$this->upload->do_upload('imagem')):
+				$data= array('error' => $this->upload->display_errors());
+				$this->load->view('home',$data);
+			else:
+		
+				$dadosImagem = $this->upload->data();
+				$tamanhos = $this->CalculaPercetual($this->input->post());
+				$configCrop['image_library'] = 'gd2';
+				$configCrop['source_image']  = $dadosImagem['full_path'];
+				$configCrop['new_image']     = './imagens/img_upload/';
+				$configCrop['maintain_ratio']= FALSE;
+				$configCrop['quality']			 = 100;
+				$configCrop['width']         = $tamanhos['wcrop'];
+				$configCrop['height']        = $tamanhos['hcrop'];
+				$configCrop['x_axis']        = $tamanhos['x'];
+				$configCrop['y_axis']        = $tamanhos['y'];
+				$this->image_lib->initialize($configCrop);
+				if ( ! $this->image_lib->crop()):
+					$data = array('error' => $this->image_lib->display_errors());
+					$this->load->view('home',$data);
+				else:
+					$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
+					
+					unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
+
+					$data_consulta['img'] = $this->minha_model->get_codicional('img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id')))->result();
+
+					if($data_consulta['img'][0]->img_perfil == 'use.png'):
+						$data_img = array('img_perfil' => $dadosImagem['file_name']);
+						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));	
+					else: 
+						$data_img = array('img_perfil' => $dadosImagem['file_name']);
+						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));
+						unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
+					endif;
+					
+
+					redirect('professor');
+				endif;
+			endif;
+		}
+
+		private
+		// -- Function Name : CalculaPercetual
+		// -- Params : 
+		// -- Descrição :
+	    function CalculaPercetual($dimensoes)
+		{
+			if($dimensoes['woriginal'] > $dimensoes['wvisualizacao']):
+				$percentual = $dimensoes['woriginal'] / $dimensoes['wvisualizacao'];
+				$dimensoes['x'] = round($dimensoes['x'] * $percentual);
+				$dimensoes['y'] = round($dimensoes['y'] * $percentual);
+				$dimensoes['wcrop'] = round($dimensoes['wcrop'] * $percentual);
+				$dimensoes['hcrop'] = round($dimensoes['hcrop'] * $percentual);
+			endif;
+
+			return $dimensoes;
+		}
+
 
 		private  
         // -- Function Name : validacao
@@ -277,7 +382,6 @@
 					endif;
 					
 				break;
-		
 
 				case 'update':
 					
@@ -334,125 +438,4 @@
 			exit();
 		endif;
 	}
-
-	// Executa o processo de recorte da imagem
-	public function Recortar()
-	{
-		// Configurações para o upload da imagem
-		// Diretório para gravar a imagem
-		$configUpload['upload_path']   = './imagens/';
-		// Tipos de imagem permitidos
-		$configUpload['allowed_types'] = 'jpg|png';
-		// Usar nome de arquivo aleatório, ignorando o nome original do arquivo
-		$configUpload['encrypt_name']  = TRUE;
-
-		// Aplica as configurações para a library upload
-		$this->upload->initialize($configUpload);
-
-		// Verifica se o upload foi efetuado ou não
-		// Em caso de erro carrega a home exibindo as mensagens
-		// Em caso de sucesso faz o processo de recorte
-		if ( ! $this->upload->do_upload('imagem'))
-		{
-			// Recupera as mensagens de erro e envia o usuário para a home
-			$data= array('error' => $this->upload->display_errors());
-			$this->load->view('home',$data);
-		}
-		else
-		{
-			// Recupera os dados da imagem
-			$dadosImagem = $this->upload->data();
-
-			// Calcula os tamanhos de ponto de corte e posição
-			// de forma proporcional em relação ao tamanho da
-			// imagem original
-			$tamanhos = $this->CalculaPercetual($this->input->post());
-
-			// Define as configurações para o recorte da imagem
-			// Biblioteca a ser utilizada
-			$configCrop['image_library'] = 'gd2';
-			//Path da imagem a ser recortada
-			$configCrop['source_image']  = $dadosImagem['full_path'];
-			// Diretório onde a imagem recortada será gravada
-			$configCrop['new_image']     = './imagens/img_upload/';
-			// Proporção
-			$configCrop['maintain_ratio']= FALSE;
-			// Qualidade da imagem
-			$configCrop['quality']			 = 100;
-			// Tamanho do recorte
-			$configCrop['width']         = $tamanhos['wcrop'];
-			$configCrop['height']        = $tamanhos['hcrop'];
-			// Ponto de corte (eixos x e y)
-			$configCrop['x_axis']        = $tamanhos['x'];
-			$configCrop['y_axis']        = $tamanhos['y'];
-
-			// Aplica as configurações para a library image_lib
-			$this->image_lib->initialize($configCrop);
-
-			// Verifica se o recorte foi efetuado ou não
-			// Em caso de erro carrega a home exibindo as mensagens
-			// Em caso de sucesso envia o usuário para a tela
-			// de visualização do recorte
-			if ( ! $this->image_lib->crop())
-			{
-				// Recupera as mensagens de erro e envia o usuário para a home
-				$data = array('error' => $this->image_lib->display_errors());
-				$this->load->view('home',$data);
-			}
-			else
-			{
-				// Define a URL da imagem gerada após o recorte
-				$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
-
-				// Grava a informação na sessão
-				$this->session->set_flashdata('urlImagem', $urlImagem);
-
-				// Grava os dados da imagem recortada na sessão
-				$this->session->set_flashdata('dadosImagem', $dadosImagem);
-
-				// Grava os dados da imagem original na sessão
-				$this->session->set_flashdata('dadosCrop', $tamanhos);
-
-				
-				unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
-
-				$data_consulta['img'] = $this->minha_model->get_id_p('img_perfil', 'tb_professores', $this->session->userdata('id'))->result();
-
-				if($data_consulta['img'][0]->img_perfil == 'use.png')
-				{
-					$data_img = array('img_perfil' => $dadosImagem['file_name']);
-					$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));	
-				}
-				else 
-				{
-					$data_img = array('img_perfil' => $dadosImagem['file_name']);
-					$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));
-					unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
-				}	
-				// Redireciona o usuário para a tela de visualização dos dados
-				redirect('professor');
-			}
-		}
-	}
-
-
-	private function CalculaPercetual($dimensoes)
-	{
-		// Verifica se a largura da imagem original é
-		// maior que a da área de recorte, se for calcula o tamanho proporcional
-		if($dimensoes['woriginal'] > $dimensoes['wvisualizacao'])
-		{
-			$percentual = $dimensoes['woriginal'] / $dimensoes['wvisualizacao'];
-
-			$dimensoes['x'] = round($dimensoes['x'] * $percentual);
-			$dimensoes['y'] = round($dimensoes['y'] * $percentual);
-			$dimensoes['wcrop'] = round($dimensoes['wcrop'] * $percentual);
-			$dimensoes['hcrop'] = round($dimensoes['hcrop'] * $percentual);
-		}
-
-		// Retorna os valores a serem utilizados no processo de recorte da imagem
-		return $dimensoes;
-	}
-
-
 }
