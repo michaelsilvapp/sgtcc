@@ -1,8 +1,29 @@
 <?php
 	defined('BASEPATH') OR exit('No direct script access allowed');
-	// -- Class Name : Professor
-	// -- Descrição : Classe com metodos de cadastro de informações de professores & validacoes e tratamentos 
-	// -- Created On : 
+	/*
+	|--------------------------Métodos do Controle------------------------------
+	|
+	| -- Class Name : professor
+	| -- Descrição : Classe com metodos de cadastro de informações de alunoes & validacoes e tratamentos 
+	| -- Criado Em : 
+	| 1. __construct
+	| 2. verifica_session
+	| 3. index
+	| 4. cadastrar_professor
+	| 5. cadastrar_formacao
+	| 6. editar_professor
+	| 7. editar_formacao
+	| 8. alterar_professor
+	| 9. alterar_senha
+	| 10. alterar_img
+	| 11. alterar_formacao
+	| 12. lista_dados_p
+	| 13. lista_dados_f
+	| 14. busca_por_curso
+	| 15. calcula_percentual
+	| 16. validacao
+	|--------------------------------------------------------------------------
+	*/
 	class Professor extends CI_Controller
 	{
 		public
@@ -35,36 +56,74 @@
 		{
 			$this->verifica_session();
 
-			$dados['user'] = $this->minha_model->get_codicional('nome, img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id') ))->result();
+			$dados['user'] = $this->minha_model->get_codicional('nome, img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id_professor') ))->result();
 			$data = array('myname' => $dados['user'][0]->nome, 'myimg' => $dados['user'][0]->img_perfil);
 			$this->load->view('inc/head');
 			$this->parser->parse('inc/menu', $data);
 			$this->parser->parse('usuarios/professor/dados', $data);
 		}
 
+		/*
+		|--------------------------------------------------------------------------
+		| 								Cadastros
+		|--------------------------------------------------------------------------
+		*/
 		public
 		// -- Function Name : cadastrar_professor
 		// -- Params : 
 		// -- Descrição : 
 		function cadastrar_professor()
 		{
-			$this->validacao('insert');
-			$data = array(
-                'nome' => $this->input->post('nome'), 
-                'cpf' => $this->input->post('cpf'), 
-                'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')), 
-                'dt_registro' => date('Y-m-d'),            
-                'sexo' => $this->input->post('sexo'),            
-                'situacao' => '1',
-                'telefone' => $this->input->post('telefone'),             
-                'email' => $this->input->post('email'),           
-                'senha' => $this->m_tlm->criptografar($this->input->post('senha')),  
-                'copetencia' => $this->input->post('copetencia'),    
-                'img_perfil' => 'use.png',
-                'area_id' => $this->input->post('area_id'));
-			$insert = $this->minha_model->cadastrar('tb_professores', $data);
-			echo json_encode(array("status" => TRUE));
+			try
+			{
+				$this->validacao('insert');
+				$data = array(
+	                'nome' => $this->input->post('nome'), 
+	                'cpf' => $this->input->post('cpf'), 
+	                'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')), 
+	                'dt_registro' => date('Y-m-d'),            
+	                'sexo' => $this->input->post('sexo'),            
+	                'situacao' => '1',
+	                'telefone' => $this->input->post('telefone'),             
+	                'email' => $this->input->post('email'),           
+	                'senha' => $this->m_tlm->criptografar($this->input->post('senha')),  
+	                'copetencia' => $this->input->post('copetencia'),    
+	                'img_perfil' => 'use.png',
+	                'area_id' => $this->input->post('area_id'));
+				$insert = $this->minha_model->cadastrar('tb_professores', $data);
+				echo json_encode(array("status" => TRUE));
+			}
+			catch(Exception $erro)
+			{
+	            echo json_encode(FALSE);
+			}
 		}
+
+		public
+		// -- Function Name : cadastrar_formacao
+		// -- Params : 
+		// -- Descrição :
+		function cadastrar_formacao()
+		{
+			try
+			{
+				$this->validacao('formacao');
+				$data = array('curso_id' => $this->input->post('curso'), 'professor_id' => $this->session->userdata('id_professor') );
+				$insert = $this->minha_model->cadastrar('tb_curso_professor', $data);
+				echo json_encode(array("status" => TRUE));
+			}
+			catch(Exception $e)
+			{
+				 $data = array(); $data['msg_erro'] = array(); $data['campo'] = array(); $data['status'] = TRUE;
+	             $data['campo'][] = 'curso'; $data['msg_erro'][] = 'ERRO' ; $data['status'] = FALSE;
+			}
+		}
+
+		/*
+		|--------------------------------------------------------------------------
+		| 								Monta edição
+		|--------------------------------------------------------------------------
+		*/
 
 		public
 		// -- Function Name : editar_professor
@@ -83,65 +142,8 @@
 			} 
 			catch (Exception $e) 
 			{
-			   $data = FALSE;
-               echo json_encode($data);
+               echo json_encode(FALSE);
 			}
-		}
-
-		public
-		// -- Function Name : alterar_professor
-		// -- Params : 
-		// -- Descrição : 
-		function alterar_professor()
-		{
-			$this->verifica_session();
-			$this->validacao('update');
-			$data = array(    
-                'nome' => $this->input->post('nome'),
-                'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')),
-                'sexo' => $this->input->post('sexo'),       
-                'telefone' => $this->input->post('telefone'), 
-                'area_id' => $this->input->post('area_id'), 
-                'copetencia' => $this->input->post('copetencia'));
-			$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->session->userdata('id')));
-			echo json_encode(array("status" => TRUE));
-		}
-
-		public
-		// -- Function Name : alterar_senha
-		// -- Params : 
-		// -- Descrição : 
-		function alterar_senha()
-		{
-			$this->verifica_session();
-			$this->validacao('update_senha');
-			$senha_atual = $this->m_tlm->criptografar($this->input->post('senha_atual'));
-			$dados['senha'] = $this->minha_model->get_codicional('senha', 'tb_professores', $this->session->userdata('id'))->result();
-
-			if($dados['senha'][0]->senha == $senha_atual):
-				$data = array('senha' => $this->m_tlm->criptografar($this->input->post('nova_senha')));
-				$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->session->userdata('id') ));
-				echo json_encode(array("status" => TRUE));
-			else:
-				$data['campo'][] = 'senha_atual';
-				$data['msg_erro'][] = 'A senha informada não confere com a anterior';
-				$data['status'] = FALSE;	
-				if($data['status'] === FALSE):
-					echo json_encode($data);
-					exit();
-				endif;
-			endif;
-		}
-
-		public
-		// -- Function Name : cadastrar_formacao
-		// -- Params : 
-		// -- Descrição :
-		function cadastrar_formacao()
-		{
-			$data = array('curso_id' => $this->input->post('curso'), 'professor_id' => $this->session->userdata('id') );
-			$insert = $this->minha_model->cadastrar('tb_curso_professor', $data);
-			echo json_encode(array("status" => TRUE));
 		}
 
 		public
@@ -163,9 +165,109 @@
 			} 
 			catch (Exception $e) 
 			{
-			   $data = FALSE;
-               echo json_encode($data);
+               echo json_encode(FALSE);
 			}
+		}
+
+		/*
+		|--------------------------------------------------------------------------
+		| 								Alteração
+		|--------------------------------------------------------------------------
+		*/
+
+		public
+		// -- Function Name : alterar_professor
+		// -- Params : 
+		// -- Descrição : 
+		function alterar_professor()
+		{
+			$this->verifica_session();
+			$this->validacao('update');
+			$data = array(    
+                'nome' => $this->input->post('nome'),
+                'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')),
+                'sexo' => $this->input->post('sexo'),       
+                'telefone' => $this->input->post('telefone'), 
+                'area_id' => $this->input->post('area_id'), 
+                'copetencia' => $this->input->post('copetencia'));
+			$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->session->userdata('id_professor')));
+			echo json_encode(array("status" => TRUE));
+		}
+
+		public
+		// -- Function Name : alterar_senha
+		// -- Params : 
+		// -- Descrição : 
+		function alterar_senha()
+		{
+			$this->verifica_session();
+			$this->validacao('update_senha');
+			$senha_atual = $this->m_tlm->criptografar($this->input->post('senha_atual'));
+			$dados['senha'] = $this->minha_model->get_codicional('senha', 'tb_professores', array('id_professor' => $this->session->userdata('id_professor')))->result();
+
+			if($dados['senha'][0]->senha == $senha_atual):
+				$data = array('senha' => $this->m_tlm->criptografar($this->input->post('nova_senha')));
+				$this->minha_model->atualizar('tb_professores', $data, array('id_professor' => $this->session->userdata('id_professor') ));
+				echo json_encode(array("status" => TRUE));
+			else:
+				$data['campo'][] = 'senha_atual';
+				$data['msg_erro'][] = 'A senha informada não confere com a anterior';
+				$data['status'] = FALSE;	
+				if($data['status'] === FALSE):
+					echo json_encode($data);
+					exit();
+				endif;
+			endif;
+		}
+
+		public
+		// -- Function Name : alterar_img
+		// -- Params : 
+		// -- Descrição : 		
+		function alterar_img()
+		{			
+			$configUpload['upload_path']   = './imagens/';
+			$configUpload['allowed_types'] = 'jpg|png';
+			$configUpload['encrypt_name']  = TRUE;
+			$this->upload->initialize($configUpload);
+
+			if(!$this->upload->do_upload('imagem')):
+				$data= array('error' => $this->upload->display_errors());
+				$this->load->view('home',$data);
+			else:
+				$dadosImagem = $this->upload->data();
+				$tamanhos = $this->calcula_percentual($this->input->post());
+				$configCrop['image_library'] = 'gd2';
+				$configCrop['source_image']  = $dadosImagem['full_path'];
+				$configCrop['new_image']     = './imagens/img_upload/';
+				$configCrop['maintain_ratio']= FALSE;
+				$configCrop['quality']			 = 100;
+				$configCrop['width']         = $tamanhos['wcrop'];
+				$configCrop['height']        = $tamanhos['hcrop'];
+				$configCrop['x_axis']        = $tamanhos['x'];
+				$configCrop['y_axis']        = $tamanhos['y'];
+				$this->image_lib->initialize($configCrop);
+				if ( ! $this->image_lib->crop()):
+					$data = array('error' => $this->image_lib->display_errors());
+					$this->load->view('home',$data);
+				else:
+					$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
+					
+					unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
+
+					$data_consulta['img'] = $this->minha_model->get_codicional('img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id_professor')))->result();
+
+					if($data_consulta['img'][0]->img_perfil == 'use.png'):
+						$data_img = array('img_perfil' => $dadosImagem['file_name']);
+						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id_professor')));	
+					else: 
+						$data_img = array('img_perfil' => $dadosImagem['file_name']);
+						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id_professor')));
+						unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
+					endif;
+					redirect('professor');
+				endif;
+			endif;
 		}
 
 		public
@@ -180,6 +282,12 @@
 			echo json_encode(array("status" => TRUE));
 		}
 
+		/*
+		|--------------------------------------------------------------------------
+		| 								Pesquisas
+		|--------------------------------------------------------------------------
+		*/
+	
 		public
 		// -- Function Name : lista_dados_p
 		// -- Params : 
@@ -193,7 +301,7 @@
                      p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
                     'tb_professores AS p', 
                     'tb_areas AS a', 
-                    'p.area_id = a.id_area AND p.id_professor = '. $this->session->userdata('id') )->row();
+                    'p.area_id = a.id_area AND p.id_professor = '. $this->session->userdata('id_professor') )->row();
 
     			$list['dados']->dt_nascimento = $this->m_tlm->data_br($list['dados']->dt_nascimento);
     			$list['dados']->sexo = ucfirst($list['dados']->sexo);
@@ -202,8 +310,7 @@
             } 
             catch (Exception $erro)
             {
-               $list = FALSE;
-               echo json_encode($list);
+               echo json_encode(FALSE);
             }
 		}
 
@@ -221,14 +328,13 @@
                 	'tb_curso_professor AS cp', 
                 	'tb_cursos AS c', 'tb_professores AS p', 
                 	'cp.curso_id = c.id_curso', 
-                	'p.id_professor = cp.professor_id AND p.id_professor = '. $this->session->userdata('id'))->result_array();
+                	'p.id_professor = cp.professor_id AND p.id_professor = '. $this->session->userdata('id_professor'))->result_array();
 
                 echo json_encode($list);
             }
             catch (Exception $erro)
             {
-               $list = FALSE;
-               echo json_encode($list);
+               echo json_encode(FALSE);
             }
         }
 
@@ -249,64 +355,17 @@
 			echo $option;
 		}
 
-		public
-		// -- Function Name : edita_imagem
-		// -- Params : 
-		// -- Descrição : 		
-		function edita_imagem()
-		{			
-			$configUpload['upload_path']   = './imagens/';
-			$configUpload['allowed_types'] = 'jpg|png';
-			$configUpload['encrypt_name']  = TRUE;
-			$this->upload->initialize($configUpload);
-
-			if(!$this->upload->do_upload('imagem')):
-				$data= array('error' => $this->upload->display_errors());
-				$this->load->view('home',$data);
-			else:
-		
-				$dadosImagem = $this->upload->data();
-				$tamanhos = $this->CalculaPercetual($this->input->post());
-				$configCrop['image_library'] = 'gd2';
-				$configCrop['source_image']  = $dadosImagem['full_path'];
-				$configCrop['new_image']     = './imagens/img_upload/';
-				$configCrop['maintain_ratio']= FALSE;
-				$configCrop['quality']			 = 100;
-				$configCrop['width']         = $tamanhos['wcrop'];
-				$configCrop['height']        = $tamanhos['hcrop'];
-				$configCrop['x_axis']        = $tamanhos['x'];
-				$configCrop['y_axis']        = $tamanhos['y'];
-				$this->image_lib->initialize($configCrop);
-				if ( ! $this->image_lib->crop()):
-					$data = array('error' => $this->image_lib->display_errors());
-					$this->load->view('home',$data);
-				else:
-					$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
-					
-					unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
-
-					$data_consulta['img'] = $this->minha_model->get_codicional('img_perfil', 'tb_professores', array('id_professor' => $this->session->userdata('id')))->result();
-
-					if($data_consulta['img'][0]->img_perfil == 'use.png'):
-						$data_img = array('img_perfil' => $dadosImagem['file_name']);
-						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));	
-					else: 
-						$data_img = array('img_perfil' => $dadosImagem['file_name']);
-						$this->minha_model->atualizar('tb_professores', $data_img, array('id_professor' => $this->session->userdata('id')));
-						unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
-					endif;
-					
-
-					redirect('professor');
-				endif;
-			endif;
-		}
-
+		/*
+		|--------------------------------------------------------------------------
+		| 								Privates
+		|--------------------------------------------------------------------------
+		*/
+	
 		private
-		// -- Function Name : CalculaPercetual
+		// -- Function Name : calcula_percentual
 		// -- Params : 
 		// -- Descrição :
-	    function CalculaPercetual($dimensoes)
+	    function calcula_percentual($dimensoes)
 		{
 			if($dimensoes['woriginal'] > $dimensoes['wvisualizacao']):
 				$percentual = $dimensoes['woriginal'] / $dimensoes['wvisualizacao'];
@@ -319,7 +378,11 @@
 			return $dimensoes;
 		}
 
-
+		/*
+		|--------------------------------------------------------------------------
+		| 								Validações
+		|--------------------------------------------------------------------------
+		*/
 		private  
         // -- Function Name : validacao
 		// -- Params : $opcao
@@ -425,12 +488,26 @@
 						$data['campo'][] = 'nova_senha'; $data['msg_erro'][] = form_error('nova_senha', ' ', ' '); $data['status'] = FALSE;
 					endif;
 					
-					if($this->form_validation->set_rules('confirmar_senha', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[nova_senha]|trim', array('matches' => 'As senhas nÃ£o sÃ£o iguais' , ))->run() == TRUE):
+					if($this->form_validation->set_rules('confirmar_senha', 'Confirmar senha', 'required|min_length[6]|max_length[13]|addslashes|matches[nova_senha]|trim', array('matches' => 'As senhas não são iguais' , ))->run() == TRUE):
 						$data['status'] = TRUE;
 					else:
 						$data['campo'][] = 'confirmar_senha'; $data['msg_erro'][] = form_error('confirmar_senha', ' ', ' '); $data['status'] = FALSE;
 					endif;
 				break;
+
+				case 'formacao':
+					if($this->form_validation->set_rules('tipo_curso', 'Curso', 'required')->run() == TRUE):
+						$data['status'] = TRUE;
+					else:
+						$data['campo'][] = 'curso'; $data['msg_erro'][] = form_error('curso', ' ', ' '); $data['status'] = FALSE;
+					endif;
+					
+					if($this->form_validation->set_rules('tipo_curso', 'Tipo Curso', 'required')->run() == TRUE):
+						$data['status'] = TRUE;
+					else:
+						$data['campo'][] = 'tipo_curso'; $data['msg_erro'][] = form_error('tipo_curso', ' ', ' '); $data['status'] = FALSE;
+					endif;
+				break; 
 			}
 		
 		if($data['status'] === FALSE):

@@ -1,6 +1,5 @@
-<!-- jCrop CSS -->
+<!--Jcrop Css-->
 <link rel="stylesheet" href="<?php echo base_url('assets/Jcrop/css/jquery.Jcrop.min.css')?>" type="text/css" />
-
 <div id="page-wrapper">
    <div class="row">
       <div class="col-md-12">
@@ -31,14 +30,16 @@
                   <div class="row">
                      <div class="col-md-2">
                         <div class="form-group">
-                           <button type="button" onclick="editar_professor(<?php echo $this->session->userdata('id_professor');?>)" 
+                           <button type="button" onclick="editar_aluno(<?php echo $this->session->userdata('id_aluno');?>)" 
                             class="btn btn-primary btn-circle btn-lg">
                               <i class="fa fa-edit"></i>
                            </button>
                         </div>
                      </div>
-                        <div class="col-md-10 col-md--2" id="container_dados_p">
-                           <div id="lista_dados_p"></div>
+                        <div class="col-md-10" id="container_dados_a">
+                         <ul class="list-group">
+                           <div id="lista_dados_a"></div>
+                        </ul>
                         </div>
                         <div class="form-group">
                               <div class="col-md-4 col-md-offset-2">
@@ -48,7 +49,7 @@
                         </div>
                         <div class="form-group">
                               <div class="col-md-6">
-                                 <button type="button" class="btn btn-block btn-primary" onclick="add_senha()">
+                                 <button type="button" class="btn btn-block btn-primary" onclick="alterar_senha_aluno()">
                                  <span class="fa fa-key"></span> Alterar Senha </button>
                               </div>
                         </div>
@@ -58,15 +59,15 @@
                   <div class="row">
                      <div class="col-md-2">
                         <div class="form-group">
-                           <button type="button" onclick="add_formacao()"class="btn btn-primary btn-circle btn-lg">
+                           <button type="button" onclick="add_formacao_aluno()"class="btn btn-primary btn-circle btn-lg">
                             <i class="fa fa-plus"></i>
                            </button>
                         </div>
                      </div>
                   </div>
                      <div class="row">
-                        <div id="container_dados_f">
-                           <div id="lista_dados_f"></div>
+                        <div id="container_dados_f_a">
+                           <div id="lista_dados_f_a"></div>
                         </div>
                      </div>
                   </div>
@@ -210,7 +211,7 @@
                <div class="box-body">
              <div class="row">
                <div class="col-md-12">
-                  <form action="<?=base_url('professor/alterar_img')?>" id="form_img" method="POST" enctype="multipart/form-data">
+                  <form action="<?=base_url('aluno/alterar_img')?>" id="form_img" method="POST" enctype="multipart/form-data">
                      <div class="form-group">
                         <div class="input-group">
                            <span class="input-group-btn">
@@ -293,7 +294,7 @@
                           <span class="help-block"></span>
                         </div>
                      </div>                     
-                     <input type="hidden" name="id_curso_professor">
+                     <input type="hidden" name="id_curso_aluno">
                      <div class="modal-footer">
                         <button type="button" id="btn_salvar" name="btn_salvar" onclick="salvar()"  class="btn btn-primary">Salvar</button>
                         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
@@ -332,7 +333,7 @@
 <!-- Bootstrap 3.3.2 JS -->
 <script src="<?php echo base_url('assets/bootstrap/dist/js/bootstrap.min.js')?>" type="text/javascript"></script>
 <!-- Listagem Aluno -->
-<script src="<?php echo base_url('lib/js/professor_listagem.js')?>"></script>
+<script src="<?php echo base_url('lib/js/aluno_listagem.js')?>"></script>
 <!--Ajax-->
 <script src="<?php echo base_url('application/views/ajax/acoes_ajax.js')?>" type="text/javascript"></script>
 <!-- Jcrop -->

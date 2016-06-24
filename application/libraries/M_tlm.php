@@ -8,7 +8,6 @@
     class M_tlm
     {
         public
-
         // -- Function Name : geradorTags
         // -- Params : $valor
         // -- Purpose : 
@@ -38,7 +37,6 @@
         }
 
         public
-
         // -- Function Name : nome_mes
         // -- Params : 
         // -- Purpose : 

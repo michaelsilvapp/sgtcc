@@ -235,14 +235,17 @@
                             </div>
                             <!-- /input-group -->
                         </li>
-                        <?php if($this->session->userdata('user') == 'professor'){ ?>
+                        <?php if($this->session->userdata('user') == 'professor'): ?>
                           <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Home</a></li>
                           <li><a href="<?php echo base_url('professor')?>"><i class="fa fa-dashboard fa-fw"></i> Meus Dados</a></li>
                           <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Registre Temas</a></li>
                           <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Avalie temas Sugerigos</a></li>
-                        <?php } elseif($this->session->userdata('user') == 'aluno'){?>
-
-                        <?php }?>
+                        <?php elseif($this->session->userdata('user') == 'aluno'):?>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Home</a></li>
+                          <li><a href="<?php echo base_url('aluno')?>"><i class="fa fa-dashboard fa-fw"></i> Meus Dados</a></li>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Temas no meu perfil</a></li>
+                          <li><a href="<?php echo base_url('home')?>"><i class="fa fa-dashboard fa-fw"></i> Meus preferidos</a></li>
+                        <?php endif; ?>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

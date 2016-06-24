@@ -58,17 +58,6 @@ function add_formacao()
     $('.modal-title').text('Formação'); // Set Title to Bootstrap modal title
 }
 
-function add_formacao_aluno()
-{
-    save_method = 'nova_formacao_aluno';
-    msg = 'cadastro';
-    $('#form_formacao')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-    $('#modal_formacao').modal('show'); // show bootstrap modal
-    $('.modal-title').text('Formação'); // Set Title to Bootstrap modal title
-}
-
 function add_professor()
 {
     save_method = 'novo_professor';
@@ -92,16 +81,6 @@ function add_senha()
     $('.modal-title').text('Alterar Senha'); // Set Title to Bootstrap modal title
 }
 
-function alterar_senha_aluno()
-{   
-    save_method = 'alterar_senha_aluno';
-    msg = 'alterar';
-    $('#form_senha')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-    $('#modal_senha').modal('show'); // show bootstrap modal
-    $('.modal-title').text('Alterar Senha'); // Set Title to Bootstrap modal title
-}
 function add_img()
 {
     save_method = 'alterar_img';
@@ -129,25 +108,15 @@ function salvar()
         url = base_url + 'professor/alterar_professor';
         data_form = $('#form_user').serialize();
     }
-    else if(save_method == 'alterar_senha')
-    {
-         url = base_url + 'professor/alterar_senha';
-         data_form = $('#form_senha').serialize();
-    }
-    else if(save_method == 'alterar_senha_aluno')
-    {
-         url = base_url + 'aluno/alterar_senha';
-         data_form = $('#form_senha').serialize();
-    }
     else if(save_method == 'novo_aluno')
     {
         url = base_url + 'aluno/cadastrar_aluno';
         data_form = $('#form_user').serialize();
     }
-    else if(save_method == 'alterar_aluno')
+    else if(save_method == 'alterar_senha')
     {
-        url = base_url + 'aluno/alterar_aluno';
-        data_form = $('#form_user').serialize();
+         url = base_url + 'professor/alterar_senha';
+         data_form = $('#form_senha').serialize();
     }
     else if(save_method == 'nova_formacao')
     {
@@ -159,16 +128,7 @@ function salvar()
         url = base_url + 'professor/alterar_formacao';  
         data_form = $('#form_formacao').serialize(); 
     }
-    else if(save_method == 'nova_formacao_aluno')
-    {
-        url = base_url + 'aluno/cadastrar_formacao';
-        data_form = $('#form_formacao').serialize();
-    }
-    else if(save_method == 'alterar_formacao_aluno')
-    {
-        url = base_url + 'aluno/alterar_formacao';  
-        data_form = $('#form_formacao').serialize(); 
-    }
+
     $.ajax({
         url : url,
         type: "POST",
@@ -217,6 +177,8 @@ function salvar()
     });
 
 }
+
+
 
 function autentica_dados_login()
 {
@@ -291,38 +253,6 @@ function editar_professor(id)
         }
     });
 }
-function editar_aluno(id)
-{
-    save_method = 'alterar_aluno';
-    msg = 'alterar';
-    $('#form_user')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-
-    
-    //Ajax Load data from ajax
-    $.ajax({
-        url : base_url + 'aluno/editar_aluno/' + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-            $('[name="nome"]').val(data.nome);
-            $('[name="dt_nascimento"]').val(data.date);
-            $('[name="telefone"]').val(data.telefone);
-            $('[name="copetencia"]').val(data.copetencia);
-            $('[name="area_id"]').val(data.area_id);
-
-            $('#modal_user').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Editar Dados'); // Set title to Bootstrap modal title
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax');
-        }
-    });
-}
 
 function editar_formacao(id)
 {
@@ -342,36 +272,6 @@ function editar_formacao(id)
             $('[name="tipo_curso"]').val(data.tipo_curso);
             $('[name="curso"]:selected').val(data.curso);
             $('[name="id_curso_professor"]').val(data.id_curso_professor);
-
-            $('#modal_formacao').modal('show'); // show bootstrap modal when complete loaded
-            $('.modal-title').text('Editar Curso'); // Set title to Bootstrap modal title
-
-        },
-        error: function (jqXHR, textStatus, errorThrown)
-        {
-            alert('Error get data from ajax');
-        }
-    });
-}
-
-function editar_formacao_aluno(id)
-{
-    save_method = 'alterar_formacao_aluno';
-    msg = 'alterar';
-    $('#form_formacao')[0].reset(); // reset form on modals
-    $('.form-group').removeClass('has-error'); // clear error class
-    $('.help-block').empty(); // clear error string
-
-    //Ajax Load data from ajax
-    $.ajax({
-        url : base_url + 'aluno/editar_formacao/' + id,
-        type: "GET",
-        dataType: "JSON",
-        success: function(data)
-        {
-            $('[name="tipo_curso"]').val(data.tipo_curso);
-            $('[name="curso"]:selected').val(data.curso);
-            $('[name="id_curso_aluno"]').val(data.id_curso_aluno);
 
             $('#modal_formacao').modal('show'); // show bootstrap modal when complete loaded
             $('.modal-title').text('Editar Curso'); // Set title to Bootstrap modal title

@@ -20,8 +20,13 @@
 		// -- Purpose : 
 		function cadastrar($tabela, $dados = null)
 		{
-			$insere_funcionario = $this->db->insert($tabela, $dados);
-			return $this->db->insert_id();
+			$insert = $this->db->insert($tabela, $dados);
+
+			if($insert):
+				return $this->db->insert_id();
+			else:
+				throw new Exception("ERRO");
+			endif;
 		}
 
 		public
@@ -106,7 +111,7 @@
             if($query->num_rows() > 0):
                 return $query;
             else:
-              throw new Exception("Nada encontrado", 2);
+              throw new Exception("Nada encontrado");
             endif;
         }
 
@@ -126,7 +131,7 @@
             if($query->num_rows() > 0):
                 return $query;
             else:
-              throw new Exception("Nada encontrado", 2);
+              throw new Exception("Nada encontrado");
             endif;
         }
 

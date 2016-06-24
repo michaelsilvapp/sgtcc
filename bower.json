@@ -20,8 +20,8 @@
     "assets/"
   ],
   "dependencies": {
-    "jquery": "2.1.4",
-    "bootstrap": "3.3.6",
+    "jquery": "latest",
+    "bootstrap": "^3.3.6",
     "metisMenu": "^2.5.2",
     "font-awesome": "^4.6.3",
     "jquery.inputmask": "^3.3.1",
