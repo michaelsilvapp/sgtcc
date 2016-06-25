@@ -211,7 +211,7 @@
 <!-- jQuery 2.1.4 -->
 <script src="<?php echo base_url('assets/jquery/dist/jquery.min.js')?>"></script>
 <!--Ajax-->
-<script src="<?php echo base_url('application/views/ajax/acoes_ajax.js')?>" type="text/javascript"></script>
+<script src="<?php echo base_url('lib/js/acoes_ajax.js')?>" type="text/javascript"></script>
 <!-- Bootstrap 3.3.2 JS -->
 <script src="<?php echo base_url('assets/bootstrap/dist/js/bootstrap.min.js')?>" type="text/javascript"></script>
 <!-- JQuery Masck -->

@@ -3,17 +3,17 @@
 	/*
 	|--------------------------Métodos do Controle------------------------------
 	|
-	| -- Class Name : aluno
+	| -- Class Name : Pessoa
 	| -- Descrição : Classe com metodos de cadastro de informações de alunoes & validacoes e tratamentos 
 	| -- Criado Em : 
 	| 1. __construct
 	| 2. verifica_session
 	| 3. index
-	| 4. cadastrar_aluno
+	| 4. cadastrar_pessoa
 	| 5. cadastrar_formacao
-	| 6. editar_aluno
+	| 6. editar_pessoa
 	| 7. editar_formacao
-	| 8. alterar_aluno
+	| 8. alterar_pessoa
 	| 9. alterar_senha
 	| 10. alterar_img
 	| 11. alterar_formacao
@@ -24,7 +24,7 @@
 	| 16. validacao
 	|--------------------------------------------------------------------------
 	*/
-	class Aluno extends CI_Controller
+	class Pessoa extends CI_Controller
 	{
 		public
 		// -- Function Name : __construct
@@ -33,7 +33,7 @@
 		function __construct()
 		{
 			parent::__construct();
-			$this->load->model('M_aluno','minha_model');
+			$this->load->model('M_pessoa','minha_model');
 			$this->load->library('M_tlm');
 		}
 
@@ -56,11 +56,26 @@
 		{
 			$this->verifica_session();
 
-			$dados['user'] = $this->minha_model->get_codicional('nome, img_perfil', 'tb_alunos', array('id_aluno' => $this->session->userdata('id_aluno') ))->result();
-			$data = array('myname' => $dados['user'][0]->nome, 'myimg' => $dados['user'][0]->img_perfil);
+			if($this->session->userdata('user') == 'aluno'):
+				$tabela = 'tb_alunos';				
+				$referencia =  'id_aluno';
+				$id = $this->session->userdata('id_aluno');
+				$caminho = 'aluno';
+			elseif($this->session->userdata('user') == 'professor'):
+				$tabela = 'tb_professores';				
+				$referencia =  'id_professor';
+				$id = $this->session->userdata('id_professor');
+				$caminho = 'professor';
+			endif;
+
+			$dados['user'] = $this->minha_model->get_codicional(
+				'nome, img_perfil', $tabela,
+				 array($referencia => $id ))->result();
+			
+			$data = array('myname' => $dados['user'][0]->nome, 'myimg' => $caminho.'/'.$dados['user'][0]->img_perfil);
 			$this->load->view('inc/head');
-			$this->parser->parse('inc/menu', $data);
-			$this->parser->parse('usuarios/aluno/dados', $data);
+			$this->load->view('inc/menu');
+			$this->parser->parse('usuarios/dados', $data);
 		}
 
 		/*
@@ -70,14 +85,22 @@
 		*/
 
 		public
-		// -- Function Name : cadastrar_aluno
+		// -- Function Name : cadastrar_pessoa
 		// -- Params : 
 		// -- Descrição : 
-		function cadastrar_aluno()
+		function cadastrar_pessoa($pessoa)
 		{
 			try
 			{
 				$this->validacao('insert');
+
+				if($pessoa == 'aluno'):
+					$tabela = 'tb_alunos';				
+
+				elseif($pessoa == 'professor'):
+					$tabela = 'tb_professores';				
+				endif;
+
 				$data = array(
 	                'nome' => $this->input->post('nome'), 
 	                'cpf' => $this->input->post('cpf'), 
@@ -91,7 +114,7 @@
 	                'copetencia' => $this->input->post('copetencia'),    
 	                'img_perfil' => 'use.png',
 	                'area_id' => $this->input->post('area_id'));
-				$insert = $this->minha_model->cadastrar('tb_alunos', $data);
+				$insert = $this->minha_model->cadastrar($tabela, $data);
 				echo json_encode(array("status" => TRUE));
 			}
 			catch(Exception $erro)
@@ -109,8 +132,19 @@
 			try
 			{
 				$this->validacao('formacao');
-				$data = array('curso_id' => $this->input->post('curso'), 'aluno_id' => $this->session->userdata('id_aluno') );
-				$insert = $this->minha_model->cadastrar('tb_curso_aluno', $data);
+				if($this->session->userdata('user') == 'aluno'):
+					$tabela = 'tb_curso_aluno';				
+					$pessoa_id = 'aluno_id'; 
+					$id =  $this->session->userdata('id_aluno');
+				elseif($this->session->userdata('user') == 'professor'):
+					$tabela = 'tb_curso_professor';		
+					$pessoa_id = 'professor_id'; 		
+					$id =  $this->session->userdata('id_professor');
+				endif;
+				
+
+				$data = array('curso_id' => $this->input->post('curso'), $pessoa_id => $id );
+				$insert = $this->minha_model->cadastrar($tabela, $data);
 				echo json_encode(array("status" => TRUE));
 			}
 			catch(Exception $e)
@@ -127,17 +161,27 @@
 		*/
 
 		public
-		// -- Function Name : editar_aluno
+		// -- Function Name : editar_pessoa
 		// -- Params : $id
 		// -- Descrição : 
-		function editar_aluno($id)
+		function editar_pessoa($id)
 		{
 			$this->verifica_session();
 			try 
-			{
+			{	
+				if($this->session->userdata('user') == 'aluno'):
+					$tabela = 'tb_alunos';				
+					$referencia = 'id_aluno';
+					$id = $this->session->userdata('id_aluno');
+				elseif($this->session->userdata('user') == 'professor'):
+					$tabela = 'tb_professores';				
+					$referencia =  'id_professor';
+					$id = $this->session->userdata('id_professor');
+				endif;
+
 				$data = $this->minha_model->get_codicional('
-                nome, email, cpf, id_aluno, dt_nascimento, sexo, copetencia, telefone, area_id', 
-                'tb_alunos', array('id_aluno' => $id))->row();
+                nome, ' .$referencia. ', dt_nascimento, sexo, copetencia, telefone, area_id', 
+                $tabela, array($referencia => $id))->row();
 				$data->date = $this->m_tlm->data_br($data->dt_nascimento);
 				echo json_encode($data);	
 			} 
@@ -156,12 +200,23 @@
 			$this->verifica_session();
 			try 
 			{
-				$data = $this->minha_model->get_two_inner('
+				if($this->session->userdata('user') == 'aluno'):
+					$data = $this->minha_model->get_two_inner('
                 	*', 
                 	'tb_curso_aluno AS cp', 
                 	'tb_cursos AS c', 'tb_alunos AS p', 
                 	'cp.curso_id = c.id_curso', 
-                	'p.id_aluno = cp.aluno_id AND cp.id_curso_aluno = '. $id)->row();
+                	'p.id_aluno = cp.aluno_id AND cp.id_curso_pessoa = '. $id)->row();
+				
+				elseif($this->session->userdata('user') == 'professor'):
+					$data = $this->minha_model->get_two_inner('
+	                	*', 
+	                	'tb_curso_professor AS cp', 
+	                	'tb_cursos AS c', 'tb_professores AS p', 
+	                	'cp.curso_id = c.id_curso', 
+	                	'p.id_professor = cp.professor_id AND cp.id_curso_pessoa = '. $id)->row();
+				endif;
+
 				echo json_encode($data);	
 			} 
 			catch (Exception $e) 
@@ -176,13 +231,14 @@
 		*/
 
 		public
-		// -- Function Name : alterar_aluno
+		// -- Function Name : alterar_pessoa
 		// -- Params : 
 		// -- Descrição : 
-		function alterar_aluno()
+		function alterar_pessoa()
 		{
 			$this->verifica_session();
 			$this->validacao('update');
+
 			$data = array(    
                 'nome' => $this->input->post('nome'),
                 'dt_nascimento' => $this->m_tlm->data_eua($this->input->post('dt_nascimento')),
@@ -190,7 +246,19 @@
                 'telefone' => $this->input->post('telefone'), 
                 'area_id' => $this->input->post('area_id'), 
                 'copetencia' => $this->input->post('copetencia'));
-			$this->minha_model->atualizar('tb_alunos', $data, array('id_aluno' => $this->session->userdata('id_aluno')));
+
+			if($this->session->userdata('user') == 'aluno'):
+				$tabela = 'tb_alunos';
+				$referencia = 'id_aluno'; 
+				$id = $this->session->userdata('id_aluno');
+
+			elseif($this->session->userdata('user') == 'professor'):
+				$tabela = 'tb_professores'; 
+				$referencia = 'id_professor';
+				$id = $this->session->userdata('id_professor'); 
+			endif; 
+
+			$this->minha_model->atualizar($tabela, $data, array($referencia => $id));
 			echo json_encode(array("status" => TRUE));
 		}
 
@@ -202,13 +270,28 @@
 		{
 			$this->verifica_session();
 			$this->validacao('update_senha');
+
+			if($this->session->userdata('user') == 'aluno'):
+				$tabela = 'tb_alunos';
+				$referencia = 'id_aluno'; 
+				$id = $this->session->userdata('id_aluno');
+
+			elseif($this->session->userdata('user') == 'professor'):
+				$tabela = 'tb_professores'; 
+				$referencia = 'id_professor';
+				$id = $this->session->userdata('id_professor'); 
+			endif; 
+
 			$senha_atual = $this->m_tlm->criptografar($this->input->post('senha_atual'));
-			$dados['senha'] = $this->minha_model->get_codicional('senha', 'tb_alunos', array('id_aluno' => $this->session->userdata('id_aluno')))->result();
+			$dados['senha'] = $this->minha_model->get_codicional(
+				'senha', $tabela, 
+				array($referencia => $id))->result();
 
 			if($dados['senha'][0]->senha == $senha_atual):
 				$data = array('senha' => $this->m_tlm->criptografar($this->input->post('nova_senha')));
-				$this->minha_model->atualizar('tb_alunos', $data, array('id_aluno' => $this->session->userdata('id_aluno') ));
+				$this->minha_model->atualizar($tabela, $data, array($referencia => $id));
 				echo json_encode(array("status" => TRUE));
+
 			else:
 				$data['campo'][] = 'senha_atual';
 				$data['msg_erro'][] = 'A senha informada não confere com a anterior';
@@ -226,10 +309,22 @@
 		// -- Descrição : 		
 		function alterar_img()
 		{			
-			$configUpload['upload_path']   = './imagens/';
+			$configUpload['upload_path']   = './imagens/img_upload';
 			$configUpload['allowed_types'] = 'jpg|png';
 			$configUpload['encrypt_name']  = TRUE;
 			$this->upload->initialize($configUpload);
+
+			if($this->session->userdata('user') == 'aluno'):
+				$tabela = 'tb_alunos';				
+				$referencia =  'id_aluno';
+				$id = $this->session->userdata('id_aluno');
+				$caminho = 'aluno';
+			elseif($this->session->userdata('user') == 'professor'):
+				$tabela = 'tb_professores';				
+				$referencia =  'id_professor';
+				$id = $this->session->userdata('id_professor');
+				$caminho = 'professor';
+			endif;
 
 			if(!$this->upload->do_upload('imagem')):
 				$data= array('error' => $this->upload->display_errors());
@@ -239,7 +334,7 @@
 				$tamanhos = $this->calcula_percentual($this->input->post());
 				$configCrop['image_library'] = 'gd2';
 				$configCrop['source_image']  = $dadosImagem['full_path'];
-				$configCrop['new_image']     = './imagens/img_upload/';
+				$configCrop['new_image']     = './imagens/img_upload/'.$caminho;
 				$configCrop['maintain_ratio']= FALSE;
 				$configCrop['quality']			 = 100;
 				$configCrop['width']         = $tamanhos['wcrop'];
@@ -251,21 +346,22 @@
 					$data = array('error' => $this->image_lib->display_errors());
 					$this->load->view('home',$data);
 				else:
-					$urlImagem = base_url('imagens/img_upload/'.$dadosImagem['file_name']);
-					
-					unlink('C:\xampp\htdocs\project\imagens/'. $dadosImagem['file_name']);
 
-					$data_consulta['img'] = $this->minha_model->get_codicional('img_perfil', 'tb_alunos', array('id_aluno' => $this->session->userdata('id_aluno')))->result();
+					$urlImagem = base_url('imagens/img_upload/'.$caminho.'/'.$dadosImagem['file_name']);
+					
+					unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $dadosImagem['file_name']);
+
+					$data_consulta['img'] = $this->minha_model->get_codicional('img_perfil', $tabela, array($referencia => $id))->result();
 
 					if($data_consulta['img'][0]->img_perfil == 'use.png'):
 						$data_img = array('img_perfil' => $dadosImagem['file_name']);
-						$this->minha_model->atualizar('tb_alunos', $data_img, array('id_aluno' => $this->session->userdata('id_aluno')));	
+						$this->minha_model->atualizar($tabela, $data_img, array($referencia => $id));	
 					else: 
 						$data_img = array('img_perfil' => $dadosImagem['file_name']);
-						$this->minha_model->atualizar('tb_alunos', $data_img, array('id_aluno' => $this->session->userdata('id_aluno')));
-						unlink('C:\xampp\htdocs\project\imagens\img_upload/'. $data_consulta['img'][0]->img_perfil);
+						$this->minha_model->atualizar($tabela, $data_img, array($referencia => $id));
+						unlink('C:\xampp\htdocs\project\imagens\img_upload/'.$caminho.'/'. $data_consulta['img'][0]->img_perfil);
 					endif;
-					redirect('aluno');
+					redirect('pessoa');
 				endif;
 			endif;
 		}
@@ -276,9 +372,18 @@
 		// -- Descrição : 
 		function alterar_formacao()
 		{
+			if($this->session->userdata('user') == 'aluno'):
+				$tabela_c = 'tb_curso_aluno';
+				$referencia = 'id_curso_pessoa'; 
+
+			elseif($this->session->userdata('user') == 'professor'):
+				$tabela_c = 'tb_curso_professor'; 
+				$referencia = 'id_curso_pessoa';
+			endif; 
+
 			$this->verifica_session();
 			$data = array('curso_id' => $this->input->post('curso'));
-			$this->minha_model->atualizar('tb_curso_aluno', $data, array('id_curso_aluno' =>  $this->input->post('id_curso_aluno') ));
+			$this->minha_model->atualizar($tabela_c, $data, array($referencia =>  $this->input->post('id_curso_pessoa') ));
 			echo json_encode(array("status" => TRUE));
 		}
 
@@ -297,11 +402,20 @@
             $this->verifica_session();
             try
             {
-    			$list['dados'] = $this->minha_model->get_one_inner('
-                     p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
-                    'tb_alunos AS p', 
-                    'tb_areas AS a', 
-                    'p.area_id = a.id_area AND p.id_aluno = '. $this->session->userdata('id_aluno') )->row();
+            	if($this->session->userdata('user') == 'aluno'):
+					$list['dados'] = $this->minha_model->get_one_inner('
+	                     p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
+	                    'tb_alunos AS p', 
+	                    'tb_areas AS a', 
+	                    'p.area_id = a.id_area AND p.id_aluno = '. $this->session->userdata('id_aluno') )->row();
+
+				elseif($this->session->userdata('user') == 'professor'):
+					$list['dados'] = $this->minha_model->get_one_inner('
+	                     p.nome, p.dt_nascimento, p.telefone, p.sexo, p.cpf, p.email, p.copetencia ,a.area', 
+	                    'tb_professores AS p', 
+	                    'tb_areas AS a', 
+	                    'p.area_id = a.id_area AND p.id_professor = '. $this->session->userdata('id_professor') )->row();
+				endif; 			
 
     			$list['dados']->dt_nascimento = $this->m_tlm->data_br($list['dados']->dt_nascimento);
     			$list['dados']->sexo = ucfirst($list['dados']->sexo);
@@ -323,12 +437,23 @@
             $this->verifica_session();
             try
             {
-                $list = $this->minha_model->get_two_inner('
-                	c.curso, cp.id_curso_aluno', 
-                	'tb_curso_aluno AS cp', 
-                	'tb_cursos AS c', 'tb_alunos AS p', 
-                	'cp.curso_id = c.id_curso', 
-                	'p.id_aluno = cp.aluno_id AND p.id_aluno = '. $this->session->userdata('id_aluno'))->result_array();
+            	if($this->session->userdata('user') == 'aluno'):
+	                $list= $this->minha_model->get_two_inner('
+	                	c.curso, cp.id_curso_pessoa', 
+	                	'tb_curso_aluno AS cp', 
+	                	'tb_cursos AS c', 'tb_alunos AS p', 
+	                	'cp.curso_id = c.id_curso', 
+	                	'p.id_aluno = cp.aluno_id AND p.id_aluno = '. $this->session->userdata('id_aluno'))->result_array();
+	    
+
+				elseif($this->session->userdata('user') == 'professor'):
+					$list = $this->minha_model->get_two_inner('
+	                	c.curso, cp.id_curso_pessoa', 
+	                	'tb_curso_professor AS cp', 
+	                	'tb_cursos AS c', 'tb_professores AS p', 
+	                	'cp.curso_id = c.id_curso', 
+	                	'p.id_professor = cp.professor_id AND p.id_professor = '. $this->session->userdata('id_professor'))->result_array();
+	            endif; 
 
                 echo json_encode($list);
             }
@@ -346,13 +471,37 @@
 		{
 			$this->verifica_session();
 			$data = $this->minha_model->get_codicional('*', 'tb_cursos', array('tipo_curso' => $this->input->post('tipo_cursos')))->result();
-			//'TecnÃ³logo' = 1 ,'TÃ©cnico' = 2,'GraduaÃ§Ã£o' = 3,'PÃ³s-graduaÃ§Ã£o' = 4,'Mestrado' = 5,'Doutorado' = 6,'Especialista' = 7
+			//'Tecnologo' = 1 ,'Técnico' = 2,'Graduação' = 3,'pós-graduação' = 4,'Mestrado' = 5,'Doutorado' = 6,'Especialista' = 7
 			$option = "<option value=''>Selecione seu curso </option>";
 			foreach($data as $linha):
 				$option .= "<option value='$linha->id_curso'>$linha->curso</option>";
 			endforeach; 
 
 			echo $option;
+		}
+
+		public
+		// -- Function Name : conta_formacaoes
+		// -- Params : 
+		// -- Descrição : 		
+		function conta_formacaoes()
+		{
+			if($this->session->userdata('user') == 'aluno'):
+				$query['total'] = $this->minha_model->get_codicional(
+					'COUNT(curso_id) AS total', 'tb_curso_aluno',
+					 array('aluno_id' => $this->session->userdata('id_aluno') ))->result();
+
+			elseif($this->session->userdata('user') == 'professor'):
+				$query['total'] = $this->minha_model->get_codicional(
+					'COUNT(curso_id) AS total', 'tb_curso_professor',
+					 array('professor_id' => $this->session->userdata('id_professor') ))->result();
+			endif;
+
+			if($query['total'][0]->total >= 4):
+				echo json_encode(1);
+			else:
+				echo json_encode(0);
+			endif;
 		}
 
 		/*

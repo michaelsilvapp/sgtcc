@@ -2,7 +2,7 @@
     // -- Class Name : M_Professor
     // -- Descrição : 
     // -- Created On : 
-    class M_Professor extends MY_Model
+    class M_Pessoa extends MY_Model
     {
         // -- Function Name : __construct
         // -- Params : 
